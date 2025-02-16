@@ -10,7 +10,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyB1PBDJzJ39QS4vEyV0S9XBfJNsXeUy8jg",
   authDomain: "rental-car-3a97a.firebaseapp.com",
   projectId: "rental-car-3a97a",
-  storageBucket: "rental-car-3a97a.firebasestorage.app",
+  storageBucket: "rental-car-3a97a.appspot.com",
   messagingSenderId: "153522700163",
   appId: "1:153522700163:web:3b73fd0bb4aae5626140b6",
   measurementId: "G-VVMSFJHD34",
