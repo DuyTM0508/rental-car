@@ -389,7 +389,7 @@ export default function HomePage() {
         <div className="flex flex-col justify-center items-center">
           <h1>Bạn muốn biết thêm thông tin về chúng tôi?</h1>
           <div className="text-center text-base">
-            CRT mang lại một ứng dụng cho thuê xe tự lái ở Đà Nẵng và sẽ mở rộng
+            CRT mang lại một ứng dụng cho thuê xe tự lái ở Hà Nội và sẽ mở rộng
             ra hơn khắp Việt Nam trong thời gian tới. CRT mong rằng sẽ đem lại
             trải nghiệp thuê xe tự lái một cách an toàn và chuyên nghiệp nhất
           </div>
