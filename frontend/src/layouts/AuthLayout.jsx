@@ -1,58 +1,70 @@
+"use client";
+
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import bgImage from "../../public/bgImage.jpg";
 import { useRouter } from "next/router";
+
 const { Title } = Typography;
 
 export const AuthLayout = ({ children }) => {
   const { pathname } = useRouter();
 
   return (
-    <Layout className="max-w-6xl mx-auto h-screen bg-white">
-      <Row>
-        <Col className="gutter-row" xs={0} sm={0} md={12} lg={12} xl={12}>
-          <div className="relative h-screen">
-            <div className="absolute z-40 inset-0 mx-[20px] my-[30px] bg-green-500 bg-opacity-50 rounded-[10px]"></div>
-            <div className="absolute inset-0 mx-[20px] my-[30px] rounded-[10px]">
-              <Image
-                className="rounded-[10px]"
-                src={bgImage}
-                alt="My Image"
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center"
-              />
-            </div>
-            <div className="absolute z-40 inset-0  mx-[20px] my-[30px]  rounded-[10px]">
-              <Title level={1} className="text-white mx-6 my-20 w-3/4">
-                CRT - Hành trình theo cách của bạn
+    <Layout className="min-h-screen bg-gray-50">
+      <Row className="h-full">
+        <Col
+          xs={24}
+          sm={24}
+          md={12}
+          lg={12}
+          xl={12}
+          className="flex items-center justify-center p-8"
+        >
+          <div className="w-full max-w-md">{children}</div>
+        </Col>
+        <Col xs={0} sm={0} md={12} lg={12} xl={12} className="relative">
+          <div className="absolute inset-0 overflow-hidden">
+            <Image
+              src={bgImage || "/placeholder.svg"}
+              alt="Background"
+              layout="fill"
+              objectFit="cover"
+              quality={100}
+              priority
+            />
+            <div className="absolute inset-0 bg-green-600/30 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-900/20 to-green-900/70" />
+          </div>
+          <div className="absolute inset-3 flex flex-col justify-between px-12 py-20 text-white">
+            <div>
+              <Title level={1} className="text-white text-5xl font-bold mb-6">
+                CRT
+              </Title>
+              <Title level={2} className="text-white font-normal">
+                Hành trình theo cách của bạn
               </Title>
             </div>
-            <div className="absolute z-50 inset-x-0 bottom-0 mx-[20px] my-[30px]   left-0    bg-green-900 bg-opacity-50 rounded-b-lg">
-              <div className="flex justify-center items-center h-20">
-                <Title level={5} className="text-white mb-6">
-                  {pathname === "/register"
-                    ? "Bạn đã có tài khoản?"
-                    : "Bạn chưa có tài khoản?"}
-                  <Button type="text" className=" font-bold  mr-5 ml-5">
-                    {pathname === "/register" ? (
-                      <Link href="/login">
-                        <div className="text-white"> Đăng nhập</div>
-                      </Link>
-                    ) : (
-                      <Link href="/register">
-                        <div className="text-white"> Đăng ký</div>
-                      </Link>
-                    )}
-                  </Button>
-                </Title>
-              </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+              <Title level={5} className="text-white mb-4">
+                {pathname === "/register"
+                  ? "Bạn đã có tài khoản?"
+                  : "Bạn chưa có tài khoản?"}
+              </Title>
+              <Link href={pathname === "/register" ? "/login" : "/register"}>
+                <Button
+                  type="primary"
+                  size="large"
+                  className="w-full bg-white text-green-600 border-white hover:bg-green-50 hover:text-green-700 hover:border-green-50"
+                >
+                  <span className="font-semibold">
+                    {pathname === "/register" ? "Đăng nhập" : "Đăng ký"}
+                  </span>
+                </Button>
+              </Link>
             </div>
           </div>
-        </Col>
-        <Col className="gutter-row" xs={24} sm={24} md={12} lg={12} xl={12}>
-          <div>{children}</div>
         </Col>
       </Row>
     </Layout>
