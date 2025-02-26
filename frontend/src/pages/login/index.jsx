@@ -98,7 +98,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+      <div className="w-full max-w-md  p-8 rounded-lg">
         <div className="flex flex-col items-center mb-8">
           <Image
             src={logo || "/placeholder.svg"}

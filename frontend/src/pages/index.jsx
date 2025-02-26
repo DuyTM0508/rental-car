@@ -13,7 +13,6 @@ import { Carousel } from "antd";
 import { range } from "lodash-es";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useRef } from "react";
-import { showError } from "@/helpers/toast";
 export default function HomePage() {
   const router = useRouter();
 
@@ -81,7 +80,7 @@ export default function HomePage() {
       );
       return response.data.result;
     } catch (error) {
-      showError(error);
+      console.log(error);
     }
   };
 
