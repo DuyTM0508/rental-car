@@ -1,3 +1,5 @@
+"use client";
+
 import { GooglePlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import axios from "axios";
@@ -7,13 +9,43 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useUserState } from "@/recoils/user.state.js";
-import { showError } from "@/helpers/toast";
+import styled from "@emotion/styled";
+
+const StyledButton = styled(Button)`
+  position: relative;
+  width: 100%;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4285f4;
+  background-color: white;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+
+  &:hover,
+  &:focus {
+    background-color: #f8faff;
+    border-color: #4285f4;
+    color: #4285f4;
+  }
+
+  .anticon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #4285f4;
+  }
+`;
+
 function OAuthGoogle() {
   const router = useRouter();
-  const [user, setUser] = useUserState();
+  const [, setUser] = useUserState();
+  const [, setAccessToken] = useLocalStorage("access_token");
 
-  const [accessToken, setAccessToken, clearAccessToken] =
-    useLocalStorage("access_token");
   const handleGoogleAuthClick = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -23,7 +55,6 @@ function OAuthGoogle() {
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/google`,
-
         {
           fullname: result.user.displayName,
           email: result.user.email,
@@ -33,42 +64,34 @@ function OAuthGoogle() {
           headers: { "Content-Type": "application/json" },
         }
       );
+
       if (res.status === 200) {
         setUser({ ...res.data });
-
         setAccessToken(res.data.access_token);
+
         if (res.data.result.role === "user") {
           router.push("/");
         } else {
           router.push("/admin/dashboard");
         }
       } else {
-        showError(error.res.data.errors[0].msg);
+        console.error(res.data.errors[0].msg);
+        toast.error("Google authentication failed", {
+          position: toast.POSITION.TOP_CENTER,
+        });
       }
     } catch (error) {
-      toast.error(error, {
+      console.error(error);
+      toast.error("An error occurred during Google authentication", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
   };
+
   return (
-    <>
-      <Button
-        onClick={handleGoogleAuthClick}
-        type="default"
-        className="relative  text-lg font-medium text-gray-500 h-[50px] w-[400px] py-2 mt-2"
-      >
-        <GooglePlusOutlined
-          style={{
-            fontSize: "25px",
-            position: "absolute",
-            left: "20px",
-            color: "gray",
-          }}
-        />
-        Google
-      </Button>
-    </>
+    <StyledButton onClick={handleGoogleAuthClick} icon={<GooglePlusOutlined />}>
+      Sign in with Google
+    </StyledButton>
   );
 }
 
