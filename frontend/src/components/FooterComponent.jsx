@@ -33,7 +33,9 @@ export default function FooterComponent() {
             <a
               href="mailto:crtteam@gmail.com"
               className="text-gray-900 underline"
-            ></a>
+            >
+              duytmhe176217@fpt.edu.vn
+            </a>
           </div>
 
           <div className="mt-4 flex gap-3">
@@ -43,7 +45,9 @@ export default function FooterComponent() {
 
           <div className="mt-4">
             <div className="font-semibold text-lg">Địa chỉ:</div>
-            <div>Km29, trường đại học FPT hòa lạc, thạch thất, hà nội</div>
+            <div>
+              Km29 Trường đại học FPT, Hoà Lạc, Thạch Thất, Hà Nội, Việt Nam
+            </div>
           </div>
         </div>
 
