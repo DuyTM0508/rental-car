@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { UploadImage } from "@/components/UploadImage";
 import axios from "axios";
 import { Button, Form, notification, Modal, InputNumber, Select } from "antd";
-import { showError } from "@/helpers/toast";
 
 export default function RegisterDriverModal({
   openRegisterDriver,
@@ -46,6 +45,7 @@ export default function RegisterDriverModal({
       });
 
       if (response.status === 200) {
+        console.log(response.data);
         setDriver({ ...response.data });
         setProfile({ ...response.data });
         handleCancleRegisterDriver();
@@ -58,7 +58,7 @@ export default function RegisterDriverModal({
           message: successMessage,
         });
       } else {
-        showError(error.response.data.errors[0].msg);
+        console.log(error.response.data.errors[0].msg);
       }
     } catch (error) {
       toast.error(error.response.data.errors[0].msg, {
