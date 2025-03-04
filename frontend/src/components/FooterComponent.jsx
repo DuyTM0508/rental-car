@@ -1,8 +1,5 @@
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { UserFilledIcon } from "@/icons";
 import { FacebookFilled, YoutubeFilled } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { Divider, Layout, Menu } from "antd";
+import { Layout } from "antd";
 import Image from "next/image";
 
 const { Footer } = Layout;
