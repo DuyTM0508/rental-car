@@ -1,4 +1,3 @@
-"use-client";
 import { Feedback } from "@/components/Feedback";
 import { DateRangePicker } from "@/components/antd";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -118,7 +117,6 @@ export default function CarDetailPage() {
   const handleCancel1 = () => {
     setIsModalCheckOpen(false);
   };
-  console.log(user?.result?.driverLicenses);
   const handleRent = () => {
     if (user === null) {
       setIsModalOpen(true);
@@ -548,7 +546,7 @@ export default function CarDetailPage() {
       </Modal>
 
       <Modal
-        title="Bạn cần xác thực giấy phái lái xe để thuê xe"
+        title="Bạn cần xác thực giấy phép lái xe để thuê xe"
         open={isModalCheckOpen}
         onOk={handleOk1}
         onCancel={handleCancel1}

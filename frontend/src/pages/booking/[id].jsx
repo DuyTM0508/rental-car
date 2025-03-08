@@ -404,11 +404,10 @@ const BookingPage = () => {
                 <Radio.Group onChange={onChange} value={costGetCar}>
                   <Space direction="vertical">
                     <Radio value={0}>
-                      88 Đ. Phạm Văn Nghị, Vĩnh Trung, Thanh Khê, Đà Nẵng
-                      550000(công ty CRT)
+                      KM29, Trường đại học FPT Hà Nội(công ty CRT)
                     </Radio>
                     <Radio value={150000}>
-                      Giao Tận nơi trong Thành phố Đà Nẵng (thêm 150k)
+                      Giao Tận nơi trong Thành phố Hà Nội (thêm 150k)
                     </Radio>
                   </Space>
                 </Radio.Group>
