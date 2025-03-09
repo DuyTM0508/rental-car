@@ -1,44 +1,42 @@
 "use client";
-import moment from "moment-timezone";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SolutionOutlined,
-  PayCircleOutlined,
-  SmileOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
-import { useMutation } from "@tanstack/react-query";
-import {
-  Button,
-  Form,
-  Input,
-  Typography,
-  Steps,
-  Radio,
-  Space,
-  DatePicker,
-  message,
-} from "antd";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import Image from "next/image";
+import { deleteBookedTimeSlots } from "@/apis/user-bookings.api";
+import Coupon from "@/components/Coupon";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useDatesState } from "@/recoils/dates.state";
 import { useUserState } from "@/recoils/user.state";
-import { deleteBookedTimeSlots } from "@/apis/user-bookings.api";
-import Coupon from "@/components/Coupon";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  LoadingOutlined,
+  PayCircleOutlined,
+  SmileOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Radio,
+  Space,
+  Steps,
+  Typography,
+} from "antd";
+import axios from "axios";
+import dayjs from "dayjs";
+import moment from "moment-timezone";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 const BookingPage = () => {
-
   const [user] = useUserState();
   const router = useRouter();
   const { query } = useRouter();
@@ -189,7 +187,8 @@ const BookingPage = () => {
         },
       ];
 
-      const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+      const currentUrl =
+        typeof window !== "undefined" ? window.location.href : "";
 
       // Gọi API tạo payment link với payload gồm totalAmount và items
       const response = await axios.post(
@@ -278,8 +277,8 @@ const BookingPage = () => {
   useEffect(() => {
     const newAmount =
       totalDays * data?.cost +
-      costGetCar -
-      ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
+        costGetCar -
+        ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
 
     form.setFieldsValue({
       amount: newAmount || 0,
@@ -355,7 +354,9 @@ const BookingPage = () => {
       } else if (vnp_TransactionStatus === "02") {
         setResult("Giao dịch bị lỗi");
       } else if (vnp_TransactionStatus === "03") {
-        setResult("Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)");
+        setResult(
+          "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)"
+        );
       } else {
         setResult("Giao dịch bị nghi ngờ gian lận");
       }
@@ -370,7 +371,6 @@ const BookingPage = () => {
       setCurrent(2);
     }
   }, [router.isReady, router.query]);
-
 
   return (
     <div className="mb-10 max-w-6xl mx-auto">
@@ -388,11 +388,7 @@ const BookingPage = () => {
                 {
                   title: "Thanh toán",
                   icon:
-                    current === 1 ? (
-                      <LoadingOutlined />
-                    ) : (
-                      <PayCircleOutlined />
-                    ),
+                    current === 1 ? <LoadingOutlined /> : <PayCircleOutlined />,
                 },
                 {
                   title: "Kết quả",
@@ -441,11 +437,10 @@ const BookingPage = () => {
                 <Radio.Group onChange={onChange} value={costGetCar}>
                   <Space direction="vertical">
                     <Radio value={0}>
-                      88 Đ. Phạm Văn Nghị, Vĩnh Trung, Thanh Khê, Đà Nẵng 550000
-                      (công ty CRT)
+                      Km29, trường đại học FPT Hà Nội (công ty CRT)
                     </Radio>
                     <Radio value={150000}>
-                      Giao Tận nơi trong Thành phố Đà Nẵng (thêm 150k)
+                      Giao Tận nơi trong Thành phố Hà Nội (thêm 150k)
                     </Radio>
                   </Space>
                 </Radio.Group>
@@ -468,9 +463,7 @@ const BookingPage = () => {
                   <p className="text-red-500">{validationMessage}</p>
                 )}
               </Space>
-              <p className="text-gray-400">
-                Tổng Số ngày thuê: {totalDays}{" "}
-              </p>
+              <p className="text-gray-400">Tổng Số ngày thuê: {totalDays} </p>
               <p className="text-gray-400">
                 Giá 1 ngày thuê:{" "}
                 {data?.cost.toLocaleString("it-IT", {
@@ -483,9 +476,9 @@ const BookingPage = () => {
                 Tổng giá thuê:{" "}
                 {(
                   totalDays * data?.cost +
-                  costGetCar -
-                  ((totalDays * data?.cost + costGetCar) * amountDiscount) /
-                  100 || 0
+                    costGetCar -
+                    ((totalDays * data?.cost + costGetCar) * amountDiscount) /
+                      100 || 0
                 ).toLocaleString("it-IT", {
                   style: "currency",
                   currency: "VND",
@@ -557,11 +550,7 @@ const BookingPage = () => {
                       },
                     ]}
                   >
-                    <TextArea
-                      readOnly
-                      rows={3}
-                      placeholder="Địa chỉ giao xe"
-                    />
+                    <TextArea readOnly rows={3} placeholder="Địa chỉ giao xe" />
                   </Form.Item>
                   <Form.Item name="date" label="Thời gian thuê xe">
                     <RangePicker
