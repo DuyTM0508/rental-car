@@ -19,34 +19,26 @@ import {
   UsbIcon,
 } from "@/icons";
 
-import moment from "moment-timezone";
-import { Button, Divider, Table, Tag, Modal, message } from "antd";
-import Image from "next/image";
-import { Image as AntImage } from "antd";
-import styled from "@emotion/styled";
-import { useRouter } from "next/router";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import Link from "next/link";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import { apiClient } from "@/apis/client";
+import { getCarDetail, likeCars } from "@/apis/user-cars.api";
+import { GET_CAR_DETAILS } from "@/constants/react-query-key.constant";
+import { useRatingsOfCar } from "@/hooks/useGetRatings";
 import { useDatesState } from "@/recoils/dates.state";
 import { useUserState } from "@/recoils/user.state";
 import {
-  HeartOutlined,
-  HeartFilled,
   CloseOutlined,
-  RotateLeftOutlined,
-  RotateRightOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined,
-  LeftOutlined,
-  RightOutlined,
-  SwapOutlined,
+  HeartFilled,
+  HeartOutlined
 } from "@ant-design/icons";
-import { GET_CAR_DETAILS } from "@/constants/react-query-key.constant";
-import { getCarDetail, likeCars } from "@/apis/user-cars.api";
-import { useRatingsOfCar } from "@/hooks/useGetRatings";
-import { apiClient } from "@/apis/client";
+import styled from "@emotion/styled";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Image as AntImage, Button, Divider, Modal, Table, Tag, message } from "antd";
+import axios from "axios";
+import moment from "moment-timezone";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 const carServices = [
   { icon: MapIcon, name: "Bản đồ" },
   { icon: BluetoothIcon, name: "Bluetooth" },
@@ -118,11 +110,14 @@ export default function CarDetailPage() {
   const handleCancel1 = () => {
     setIsModalCheckOpen(false);
   };
-  console.log(user?.result?.driverLicenses);
+  console.log(user?.result?.driverLicenses.status);
   const handleRent = () => {
     if (user === null) {
       setIsModalOpen(true);
-    } else if (user?.result?.driverLicenses === undefined) {
+    } else if (
+      user?.result?.driverLicenses.status === "Chưa xác thực" ||
+      user?.result?.driverLicenses === undefined
+    ) {
       setIsModalCheckOpen(true);
     } else {
       if (validationMessage === "Khoảng ngày đã được thuê.") {
@@ -548,7 +543,7 @@ export default function CarDetailPage() {
       </Modal>
 
       <Modal
-        title="Bạn cần xác thực giấy phái lái xe để thuê xe"
+        title="Giấy phép lái xe của bạn chưa được xác thực, vui lòng liên hệ với nhân viên để được hỗ trợ"
         open={isModalCheckOpen}
         onOk={handleOk1}
         onCancel={handleCancel1}
