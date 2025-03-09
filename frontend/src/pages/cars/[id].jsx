@@ -1,4 +1,5 @@
-"use-client";
+"use client";
+
 import { Feedback } from "@/components/Feedback";
 import { DateRangePicker } from "@/components/antd";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -25,20 +26,17 @@ import { GET_CAR_DETAILS } from "@/constants/react-query-key.constant";
 import { useRatingsOfCar } from "@/hooks/useGetRatings";
 import { useDatesState } from "@/recoils/dates.state";
 import { useUserState } from "@/recoils/user.state";
-import {
-  CloseOutlined,
-  HeartFilled,
-  HeartOutlined
-} from "@ant-design/icons";
+import { CloseOutlined, HeartFilled, HeartOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Image as AntImage, Button, Divider, Modal, Table, Tag, message } from "antd";
+import { Image as AntImage, Button, Modal, Table, Tag, message } from "antd";
 import axios from "axios";
 import moment from "moment-timezone";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+
 const carServices = [
   { icon: MapIcon, name: "Bản đồ" },
   { icon: BluetoothIcon, name: "Bluetooth" },
@@ -58,16 +56,14 @@ export default function CarDetailPage() {
   const carId = router.query.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalCheckOpen, setIsModalCheckOpen] = useState(false);
-
   const [showPreview, setShowPreview] = useState(false);
-
   const [user, setUser] = useUserState();
   const [accessToken, setAccessToken, clearAccessToken] = useLocalStorage(
     "access_token",
     ""
   );
   const [liked, setLiked] = useState();
-  console.log(liked);
+
   const handleOk = () => {
     setIsModalOpen(false);
   };
@@ -87,7 +83,6 @@ export default function CarDetailPage() {
             },
             withCredentials: true,
           });
-          console.log(data);
           // Update the Recoil state with the fetched user data
           setUser(data);
         }
@@ -110,7 +105,7 @@ export default function CarDetailPage() {
   const handleCancel1 = () => {
     setIsModalCheckOpen(false);
   };
-  console.log(user?.result?.driverLicenses.status);
+
   const handleRent = () => {
     if (user === null) {
       setIsModalOpen(true);
@@ -130,13 +125,12 @@ export default function CarDetailPage() {
 
   const [dates, setDates] = useDatesState();
   const [bookedTimeSlots, setBookedTimeSlots] = useState([]);
-
   const [validationMessage, setValidationMessage] = useState("");
+
   function isDateBooked(startDate, endDate) {
     for (const slot of bookedTimeSlots) {
       const bookedStart = moment(slot.from);
       const bookedEnd = moment(slot.to);
-      console.log(bookedStart, bookedEnd);
 
       if (bookedStart >= startDate && bookedEnd <= endDate) return true;
     }
@@ -154,16 +148,8 @@ export default function CarDetailPage() {
         setValidationMessage("");
       }
     }
-    console.log(dates);
     setDates(dates);
   };
-  // const range = (start, end) => {
-  //   const result = [];
-  //   for (let i = start; i < end; i++) {
-  //     result.push(i);
-  //   }
-  //   return result;
-  // };
 
   const disabledRangeTime = (_, type) => {
     if (type === "start") {
@@ -203,19 +189,12 @@ export default function CarDetailPage() {
     return isPastDate || isBookedDate;
   };
 
-  // const { data: ratings } = useQuery({
-  //   queryKey: [GET_RATINGS_OF_CAR, carId],
-  //   queryFn: () => getRatingsOfCar(carId),
-  // });
-
   const {
     data: ratings,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useRatingsOfCar(carId);
-
-  console.log(ratings);
 
   const { data: car } = useQuery({
     queryKey: [GET_CAR_DETAILS, carId],
@@ -240,7 +219,7 @@ export default function CarDetailPage() {
     };
 
     checkLikeStatus();
-  }, [carId]);
+  }, [carId, user?.id]);
 
   const apiLikeCar = useMutation({
     mutationFn: likeCars,
@@ -264,7 +243,6 @@ export default function CarDetailPage() {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/bookings/${carId}`,
-
           {
             headers: {
               "Content-Type": "application/json",
@@ -272,7 +250,6 @@ export default function CarDetailPage() {
             withCredentials: true,
           }
         );
-        console.log(response.data.result);
         setBookedTimeSlots(response.data.result);
         return response.data.result;
       } catch (error) {
@@ -281,22 +258,41 @@ export default function CarDetailPage() {
     },
   });
 
-  console.log({ showPreview });
-
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="grid h-[600px] gap-4 grid-cols-4 grid-rows-3 relative">
-        <div className="relative col-span-3 row-span-3 rounded-md overflow-hidden">
-          <Image alt="car" src={car?.result.thumb} layout="fill" />
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Image Gallery */}
+      <div className="grid h-[600px] gap-4 grid-cols-4 grid-rows-3 relative rounded-xl overflow-hidden shadow-lg">
+        <div className="relative col-span-3 row-span-3 rounded-xl overflow-hidden transition-transform hover:scale-[1.01] duration-300">
+          <Image
+            alt={car?.result.model.name || "Car"}
+            src={car?.result.thumb || "/placeholder.svg"}
+            layout="fill"
+            className="object-cover"
+          />
         </div>
-        <div className="relative rounded-md overflow-hidden">
-          <Image alt="car" src={car?.result.images[0]} layout="fill" />
+        <div className="relative rounded-xl overflow-hidden transition-transform hover:scale-[1.05] duration-300">
+          <Image
+            alt={`${car?.result.model.name || "Car"} image 1`}
+            src={car?.result.images[0] || "/placeholder.svg"}
+            layout="fill"
+            className="object-cover"
+          />
         </div>
-        <div className="relative rounded-md overflow-hidden">
-          <Image alt="car" src={car?.result.images[1]} layout="fill" />
+        <div className="relative rounded-xl overflow-hidden transition-transform hover:scale-[1.05] duration-300">
+          <Image
+            alt={`${car?.result.model.name || "Car"} image 2`}
+            src={car?.result.images[1] || "/placeholder.svg"}
+            layout="fill"
+            className="object-cover"
+          />
         </div>
-        <div className="relative rounded-md overflow-hidden">
-          <Image alt="car" src={car?.result.images[2]} layout="fill" />
+        <div className="relative rounded-xl overflow-hidden transition-transform hover:scale-[1.05] duration-300">
+          <Image
+            alt={`${car?.result.model.name || "Car"} image 3`}
+            src={car?.result.images[2] || "/placeholder.svg"}
+            layout="fill"
+            className="object-cover"
+          />
         </div>
 
         <AntImage.PreviewGroup
@@ -307,159 +303,215 @@ export default function CarDetailPage() {
           }}
         />
         <div
-          className="absolute bg-white rounded-md px-4 py-2 bottom-4 right-4 flex items-center gap-2 text-gray-800 cursor-pointer"
+          className="absolute bg-white/90 backdrop-blur-sm rounded-full px-5 py-3 bottom-6 right-6 flex items-center gap-2 text-gray-800 cursor-pointer shadow-md hover:bg-white transition-all duration-300"
           onClick={() => {
             setShowPreview(true);
           }}
         >
           <ImageFilledIcon />
-          Xem tất cả ảnh
+          <span className="font-medium">Xem tất cả ảnh</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-5 mt-10 gap-4">
-        <div className="col-span-3">
-          <div className="flex justify-between">
-            <h1 className="text-4xl m-0 font-bold">
-              {car?.result.model.name} {car?.result.yearManufacture}
-            </h1>
+      <div className="grid grid-cols-1 lg:grid-cols-5 mt-10 gap-8">
+        <div className="lg:col-span-3 space-y-8">
+          {/* Car Header */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl md:text-4xl m-0 font-bold text-gray-900">
+                {car?.result.model.name} {car?.result.yearManufacture}
+              </h1>
 
-            {!liked ? (
-              <HeartOutlined
-                className="p-3 border border-solid text-gray-500 rounded-full"
-                style={{ fontSize: "24px" }}
-                onClick={handleLikeClick}
-              />
-            ) : (
-              <HeartFilled
-                className="p-3 border border-solid rounded-full"
-                style={{ fontSize: "24px", color: "#fb452b" }}
-                onClick={handleLikeClick}
-              />
-            )}
-          </div>
-          <div className="flex gap-4 mt-2 text-gray-800">
-            <div className="flex items-center gap-1">
-              <StarFilledIcon className="text-yellow-500" />
-              <span>{car?.result.totalRatings}</span>
+              {!liked ? (
+                <button
+                  className="p-3 border border-solid text-gray-500 rounded-full hover:bg-gray-50 transition-colors duration-300"
+                  onClick={handleLikeClick}
+                >
+                  <HeartOutlined style={{ fontSize: "24px" }} />
+                </button>
+              ) : (
+                <button
+                  className="p-3 border border-solid rounded-full bg-red-50 hover:bg-red-100 transition-colors duration-300"
+                  onClick={handleLikeClick}
+                >
+                  <HeartFilled style={{ fontSize: "24px", color: "#fb452b" }} />
+                </button>
+              )}
             </div>
 
-            <div className="flex items-center gap-1">
-              <BagFilledIcon className="text-green-500" />
-              <span>27 chuyến</span>
-            </div>
-
-            <div>Ngũ Hành Sơn, Đà Nẵng</div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            <Tag className="rounded-full border-none bg-green-100">
-              {car?.result.transmissions}
-            </Tag>
-            {/* <Tag className="rounded-full border-none bg-rose-100">
-              Đặt xe nhanh
-            </Tag> */}
-          </div>
-
-          <Divider />
-
-          <div>
-            <h2 className="font-medium">Đặc điểm</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-6">
-                <SeatIcon className="shrink-0 text-2xl text-green-500" />
-                <div className="flex flex-col items-center text-base">
-                  <span className="text-gray-800">Số ghê</span>
-                  <span className="font-bold">{car?.result.numberSeat}</span>
-                </div>
+            <div className="flex flex-wrap gap-4 mt-3 text-gray-700">
+              <div className="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full">
+                <StarFilledIcon className="text-yellow-500" />
+                <span className="font-medium">{car?.result.totalRatings}</span>
               </div>
 
-              <div className="flex items-center gap-6">
-                <TransmissionIcon className="shrink-0 text-2xl text-green-500" />
-                <div className="flex flex-col items-center text-base">
-                  <span className="text-gray-800">Truyền động</span>
-                  <span className="font-bold">
-                    {" "}
-                    {car?.result.transmissions}
+              <div className="flex items-center gap-1 bg-green-50 px-3 py-1 rounded-full">
+                <BagFilledIcon className="text-green-500" />
+                <span className="font-medium">27 chuyến</span>
+              </div>
+
+              <div className="flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full">
+                <MapIcon className="text-blue-500" />
+                <span className="font-medium">Ngũ Hành Sơn, Đà Nẵng</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-4">
+              <Tag className="rounded-full border-none bg-green-100 text-green-800 font-medium px-3 py-1">
+                {car?.result.transmissions}
+              </Tag>
+            </div>
+          </div>
+
+          {/* Car Features */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Đặc điểm</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
+                <div className="bg-green-100 p-3 rounded-full">
+                  <SeatIcon className="text-2xl text-green-600" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-600 text-sm">Số ghế</span>
+                  <span className="font-bold text-lg">
+                    {car?.result.numberSeat}
                   </span>
                 </div>
               </div>
 
-              {/* <div className="flex items-center gap-4">
-                <GasIcon className="shrink-0 text-2xl text-green-500" />
-                <div className="flex flex-col items-center text-base">
-                  <span className="text-gray-800">Nhiên liệu</span>
-                  <span className="font-bold">Xăng</span>
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
+                <div className="bg-green-100 p-3 rounded-full">
+                  <TransmissionIcon className="text-2xl text-green-600" />
                 </div>
-              </div> */}
+                <div className="flex flex-col">
+                  <span className="text-gray-600 text-sm">Truyền động</span>
+                  <span className="font-bold text-lg">
+                    {car?.result.transmissions}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <Divider />
-
-          <div>
-            <h2 className="font-medium">Mô tả</h2>
-            <p>{car?.result.description}</p>
+          {/* Car Description */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Mô tả</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {car?.result.description}
+            </p>
           </div>
 
-          <Divider />
-
-          <div>
-            <h2 className="font-medium">Các tiện nghi khác</h2>
-            <div className="grid grid-cols-3 gap-x-y gap-y-8">
+          {/* Car Amenities */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">
+              Các tiện nghi khác
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6">
               {carServices.map(({ icon: Icon, name }) => (
-                <div key={name} className="flex items-center gap-3">
-                  <Icon className="text-xl" />
-                  {name}
+                <div
+                  key={name}
+                  className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg"
+                >
+                  <div className="bg-blue-100 p-2 rounded-full">
+                    <Icon className="text-xl text-blue-600" />
+                  </div>
+                  <span className="font-medium">{name}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mt-10">
-            <h2 className="font-medium">Giấy tờ thuê xe</h2>
-            <div className="bg-amber-100 border-transparent rounded-md p-4 border-solid border-l-4 border-l-amber-600">
-              <h4 className="flex items-center gap-1 text-gray-800 m-0 font-medium">
-                <InfoIcon />
+          {/* Rental Requirements */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">
+              Giấy tờ thuê xe
+            </h2>
+            <div className="bg-amber-50 border-transparent rounded-xl p-5 border-solid border-l-4 border-l-amber-600">
+              <h4 className="flex items-center gap-2 text-gray-800 m-0 font-medium">
+                <InfoIcon className="text-amber-600" />
                 <span>Chọn 1 trong 2 hình thức</span>
               </h4>
-              <div className="mt-4 font-bold flex flex-col gap-3">
-                <div className="flex gap-2 items-center">
-                  <IdCardIcon className="text-xl" />
+              <div className="mt-4 font-medium flex flex-col gap-4">
+                <div className="flex gap-3 items-center bg-white p-3 rounded-lg">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <IdCardIcon className="text-xl text-green-600" />
+                  </div>
                   <span>GPLX & CCCD gắn chip (đối chiếu)</span>
                 </div>
-                <div className="flex gap-2 items-center">
-                  <DriverLicenceIcon className="text-xl" />
+                <div className="flex gap-3 items-center bg-white p-3 rounded-lg">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <DriverLicenceIcon className="text-xl text-green-600" />
+                  </div>
                   <span>GPLX (đối chiếu) & Passport (giữ lại)</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-10">
-            <h2 className="font-medium">Điều khoản</h2>
-            <ul>
-              <li>Sử dụng xe đúng mục đích.</li>
-              <li>
-                Không sử dụng xe thuê vào mục đích phi pháp, trái pháp luật.
+          {/* Terms */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Điều khoản</h2>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>Sử dụng xe đúng mục đích.</span>
               </li>
-              <li>Không sử dụng xe thuê để cầm cố, thế chấp.</li>
-              <li>Không hút thuốc, nhả kẹo cao su, xả rác trong xe.</li>
-              <li>Không chở hàng quốc cấm dễ cháy nổ.</li>
-              <li>Không chở hoa quả, thực phẩm nặng mùi trong xe.</li>
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>
+                  Không sử dụng xe thuê vào mục đích phi pháp, trái pháp luật.
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>Không sử dụng xe thuê để cầm cố, thế chấp.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>Không hút thuốc, nhả kẹo cao su, xả rác trong xe.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>Không chở hàng quốc cấm dễ cháy nổ.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="bg-green-100 p-1 rounded-full mt-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+                <span>Không chở hoa quả, thực phẩm nặng mùi trong xe.</span>
+              </li>
             </ul>
           </div>
 
-          <div className="mt-10">
-            <h2 className="font-medium">Chính sách hủy chuyến</h2>
-            <div>Miễn phí hủy chuyến trong vòng 1 giờ sau khi đặt cọc</div>
+          {/* Cancellation Policy */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">
+              Chính sách hủy chuyến
+            </h2>
+            <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <InfoIcon className="text-blue-600" />
+              </div>
+              <span className="font-medium text-gray-700">
+                Miễn phí hủy chuyến trong vòng 1 giờ sau khi đặt cọc
+              </span>
+            </div>
           </div>
 
-          <Divider />
-
-          <div className="mt-10 max-w">
-            <h2 className="font-medium">Đánh giá</h2>
-            <div className="flex flex-col gap-4">
+          {/* Ratings */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-6 text-gray-900">Đánh giá</h2>
+            <div className="flex flex-col gap-6">
               {ratings?.pages?.map((page, pageIndex) => (
                 <React.Fragment key={pageIndex}>
                   {page?.result.map((rating, index) => (
@@ -468,11 +520,11 @@ export default function CarDetailPage() {
                 </React.Fragment>
               ))}
               {hasNextPage && (
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-4">
                   <Button
                     onClick={() => fetchNextPage()}
                     disabled={isFetchingNextPage}
-                    className="w-1/5 p-5 flex items-center justify-center"
+                    className="w-1/3 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 border-none text-gray-700 font-medium"
                   >
                     {isFetchingNextPage ? "Đang tải..." : "Đọc thêm"}
                   </Button>
@@ -482,76 +534,114 @@ export default function CarDetailPage() {
           </div>
         </div>
 
-        <div className="col-span-2 ">
-          <div className="flex gap-4 border border-solid rounded-lg border-gray-300 p-4 items-center">
-            <ShieldCheckOutlineIcon className="text-green-500" />
-            <div className="flex flex-col gap-2">
-              <span className="text-lg text-green-500 font-bold">
-                Hỗ trợ bảo hiểm với VNI
-              </span>
-              <span className="font-medium text-xs text-gray-900">
-                Xem chi tiết
-              </span>
+        {/* Booking Section */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="sticky top-6">
+            {/* Insurance */}
+            <div className="flex gap-4 bg-white border border-solid rounded-xl border-gray-200 p-5 items-center shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-green-100 p-3 rounded-full">
+                <ShieldCheckOutlineIcon className="text-green-600 text-xl" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-lg text-green-600 font-bold">
+                  Hỗ trợ bảo hiểm với VNI
+                </span>
+                <span className="font-medium text-xs text-gray-700 hover:text-green-600 cursor-pointer transition-colors">
+                  Xem chi tiết
+                </span>
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-4 border border-solid rounded-lg border-gray-300 p-4 bg-green-50 mt-10">
-            <h1>
-              {car?.result?.cost?.toLocaleString("it-IT", {
-                style: "currency",
-                currency: "VND",
-              })}
-              /ngày
-            </h1>
-            <DateRangePicker
-              showTime={{ format: "HH:mm" }}
-              format="DD-MM-YYYY HH:mm"
-              // defaultValue={[
-              //   dayjs(from, "DD-MM-YYYY HH:mm"),
-              //   dayjs(to, "DD-MM-YYYY HH:mm"),
-              // ]}
-              disabledTime={disabledRangeTime}
-              disabledDate={disabledDate}
-              className="rounded-full"
-              onChange={handleDateChange}
-            />
-            {validationMessage && (
-              <p className="text-red-500 ml-2">{validationMessage}</p>
-            )}
-            <div className="flex justify-center ">
-              {/* <Link href={`/booking/${car?.result._id}`}> */}
-              <Button type="primary" onClick={handleRent}>
+            {/* Booking Card */}
+            <div className="flex flex-col gap-6 bg-white border border-solid rounded-xl border-gray-200 p-6 mt-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {car?.result?.cost?.toLocaleString("it-IT", {
+                    style: "currency",
+                    currency: "VND",
+                  })}
+                </h2>
+                <span className="text-gray-600 font-medium">/ngày</span>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-xl">
+                <h3 className="text-lg font-medium mb-3 text-gray-800">
+                  Chọn thời gian thuê
+                </h3>
+                <DateRangePicker
+                  showTime={{ format: "HH:mm" }}
+                  format="DD-MM-YYYY HH:mm"
+                  disabledTime={disabledRangeTime}
+                  disabledDate={disabledDate}
+                  className="w-full"
+                  onChange={handleDateChange}
+                />
+                {validationMessage && (
+                  <p className="text-red-500 mt-2 text-sm">
+                    {validationMessage}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="primary"
+                onClick={handleRent}
+                className="h-12 text-base font-medium rounded-full bg-green-600 hover:bg-green-700"
+                size="large"
+              >
                 Chọn thuê
               </Button>
-              {/* </Link> */}
+
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                <InfoIcon className="text-gray-400" />
+                <span>Bạn chỉ phải thanh toán khi đặt xe được xác nhận</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Login Modal */}
       <Modal
         title="Bạn cần đăng nhập để thuê xe"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
         footer={false}
+        className="rounded-xl overflow-hidden"
       >
-        <Link href="/login ">
-          <Button type="primary" className="mt-5">
-            Login
+        <p className="my-4 text-gray-600">
+          Vui lòng đăng nhập để tiếp tục thuê xe.
+        </p>
+        <Link href="/login">
+          <Button
+            type="primary"
+            className="mt-2 h-10 rounded-full bg-green-600 hover:bg-green-700"
+          >
+            Đăng nhập
           </Button>
         </Link>
       </Modal>
 
+      {/* License Verification Modal */}
       <Modal
-        title="Giấy phép lái xe của bạn chưa được xác thực, vui lòng liên hệ với nhân viên để được hỗ trợ"
+        title="Giấy phép lái xe chưa được xác thực"
         open={isModalCheckOpen}
         onOk={handleOk1}
         onCancel={handleCancel1}
         footer={false}
+        className="rounded-xl overflow-hidden"
       >
-        <Link href="/profile ">
-          <Button type="primary" className="mt-5">
-            Profile
+        <p className="my-4 text-gray-600">
+          Giấy phép lái xe của bạn chưa được xác thực, vui lòng liên hệ với nhân
+          viên để được hỗ trợ.
+        </p>
+        <Link href="/profile">
+          <Button
+            type="primary"
+            className="mt-2 h-10 rounded-full bg-green-600 hover:bg-green-700"
+          >
+            Đến trang cá nhân
           </Button>
         </Link>
       </Modal>

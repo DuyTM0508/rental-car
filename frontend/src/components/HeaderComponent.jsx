@@ -1,3 +1,7 @@
+"use client";
+
+import React from "react";
+
 import { UserFilledIcon } from "@/icons";
 import styled from "@emotion/styled";
 import Link from "next/link";
@@ -6,21 +10,48 @@ import logo from "../../public/logo.png";
 import { Avatar, Layout, Menu, Space, Button, Dropdown } from "antd";
 import { useUserState } from "@/recoils/user.state.js";
 import { useDriverState } from "@/recoils/driver.state";
-import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  CarOutlined,
+  HomeOutlined,
+  InfoCircleOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useRouter } from "next/router";
+
 const StyledMenu = styled(Menu)`
-  li {
-    &::after {
-      display: none;
-    }
+  &.ant-menu {
+    border-bottom: none;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ant-menu-item {
+    padding: 0 20px;
+    margin: 0 4px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 
     &:hover {
-      color: "#4ade80";
+      color: #22c55e;
+      background-color: rgba(34, 197, 94, 0.05);
+    }
+
+    &.ant-menu-item-selected {
+      color: #22c55e;
+      background-color: rgba(34, 197, 94, 0.1);
+
+      &::after {
+        border-bottom: 2px solid #22c55e;
+      }
     }
   }
 `;
+
 const { Header } = Layout;
+
 export default function HeaderComponent() {
   const [user, setUser] = useUserState();
   const [driver, setDriver] = useDriverState();
@@ -28,10 +59,21 @@ export default function HeaderComponent() {
   const { pathname, push } = useRouter();
   const [accessToken, setAccessToken, clearAccessToken] =
     useLocalStorage("access_token");
+
+  const handleLogout = () => {
+    clearAccessToken();
+    setUser(null);
+    setDriver(null);
+    router.push("/");
+  };
+
   const items = [
     {
       label: (
-        <div onClick={() => push("/profile")}>
+        <div
+          onClick={() => push("/profile")}
+          className="flex items-center py-2 px-1 hover:text-green-500 transition-colors"
+        >
           <UserOutlined className="mr-2" />
           Thông tin cá nhân
         </div>
@@ -39,23 +81,40 @@ export default function HeaderComponent() {
       key: "0",
     },
     {
+      type: "divider",
+    },
+    {
       label: (
         <div
-          onClick={() => {
-            clearAccessToken();
-            setUser(null);
-            setDriver(null);
-            router.push("/");
-          }}
+          onClick={handleLogout}
+          className="flex items-center py-2 px-1 hover:text-red-500 transition-colors"
         >
-          {" "}
-          <LogoutOutlined className=" text-red-600 mr-2" />
+          <LogoutOutlined className="text-red-500 mr-2" />
           Đăng xuất
         </div>
       ),
       key: "1",
     },
   ];
+
+  const menuItems = [
+    {
+      key: "/",
+      icon: <HomeOutlined />,
+      label: <Link href={"/"}>Trang chủ</Link>,
+    },
+    {
+      key: "/about-us",
+      icon: <InfoCircleOutlined />,
+      label: <Link href={"/about-us"}>Về CRT</Link>,
+    },
+    {
+      key: "/cars",
+      icon: <CarOutlined />,
+      label: <Link href={"/cars"}>Danh sách xe</Link>,
+    },
+  ];
+
   return (
     <Header
       style={{
@@ -63,70 +122,94 @@ export default function HeaderComponent() {
         top: 0,
         zIndex: 99,
         width: "100%",
-        display: "flex",
-        alignItems: "center",
+        padding: "0 20px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
       }}
-      className="bg-white"
+      className="bg-white h-16 flex items-center"
     >
-      <div className="flex h-full w-full max-w-6xl mx-auto justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="shrink-0 mt-7 cursor-pointer">
-            <Link href="/">
-              <Image src={logo} height={60} width={100} />
-            </Link>
-          </div>
-          {/* <h2 className="text-green-500">CRT</h2> */}
+      <div className="flex h-full w-full max-w-6xl mx-auto justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center">
+            <div className="relative h-10 w-24 transition-transform hover:scale-105">
+              <Image
+                src={logo || "/placeholder.svg"}
+                alt="CRT Logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </Link>
         </div>
+
+        {/* Navigation */}
         <StyledMenu
-          className="grow border-none font-semibold flex justify-end w-2/4 gap-4"
+          className="border-none flex-1 mx-4 hidden md:flex"
           mode="horizontal"
-          items={[
-            {
-              key: "about-us",
-              label: "Về CRT",
-            },
-            {
-              key: "cars",
-              label: "Danh sách xe",
-            },
-            {
-              key: "contact",
-              label: "Liên hệ",
-            },
-          ]}
+          selectedKeys={[pathname]}
+          items={menuItems}
         />
+
+        {/* Auth Buttons or User Profile */}
         {!user ? (
-          <Space wrap>
+          <Space className="shrink-0">
             <Link href="/register">
-              <Button className="font-semibold" type="text">
+              <Button
+                className="font-medium border-green-500 text-green-500 hover:text-green-600 hover:border-green-600 h-9 px-4 rounded-lg"
+                type="default"
+              >
                 Đăng ký
               </Button>
             </Link>
             <Link href="/login">
-              <Button className="font-semibold" type="primary">
+              <Button
+                className="font-medium bg-green-500 hover:bg-green-600 border-none h-9 px-4 rounded-lg shadow-sm hover:shadow transition-all"
+                type="primary"
+              >
                 Đăng nhập
               </Button>
             </Link>
           </Space>
         ) : (
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="flex rounded-full p-1 cursor-pointer">
-              <Dropdown
-                className="cursor-pointer"
-                menu={{
-                  items,
-                }}
-                placement="bottom"
-                trigger={["click"]}
-              >
+          <div className="flex items-center gap-3 shrink-0">
+            <Dropdown
+              menu={{ items }}
+              placement="bottomRight"
+              trigger={["click"]}
+              overlayClassName="rounded-lg shadow-lg"
+              overlayStyle={{ minWidth: "180px" }}
+              dropdownRender={(menu) => (
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-600">
+                      Xin chào
+                    </p>
+                    <p className="text-base font-semibold text-gray-900 truncate max-w-[200px]">
+                      {user?.result?.fullname || "Người dùng"}
+                    </p>
+                  </div>
+                  {React.cloneElement(menu)}
+                </div>
+              )}
+            >
+              <div className="flex items-center gap-2 cursor-pointer py-1 px-2 rounded-full hover:bg-gray-50 transition-colors">
                 {user?.result?.profilePicture ? (
-                  <Avatar src={user?.result?.profilePicture} />
+                  <Avatar
+                    src={user?.result?.profilePicture}
+                    size={36}
+                    className="border-2 border-green-100"
+                  />
                 ) : (
-                  <UserFilledIcon className="text-neutral-500" />
+                  <div className="bg-green-50 p-2 rounded-full flex items-center justify-center">
+                    <UserFilledIcon className="text-green-500 text-lg" />
+                  </div>
                 )}
-              </Dropdown>
-            </div>
-            <span>{user?.result?.fullname}</span>
+                <span className="font-medium text-gray-700 hidden sm:inline-block">
+                  {user?.result?.fullname?.split(" ").pop() || "Người dùng"}
+                </span>
+              </div>
+            </Dropdown>
           </div>
         )}
       </div>
