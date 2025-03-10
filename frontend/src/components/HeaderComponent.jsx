@@ -59,9 +59,11 @@ export default function HeaderComponent() {
   const { pathname, push } = useRouter();
   const [accessToken, setAccessToken, clearAccessToken] =
     useLocalStorage("access_token");
+  const [profile, setProfile, clearProfile] = useLocalStorage("profile", "");
 
   const handleLogout = () => {
     clearAccessToken();
+    clearProfile();
     setUser(null);
     setDriver(null);
     router.push("/");
