@@ -7,12 +7,34 @@ import {
 import { AdminLayout } from "@/layouts/AdminLayout";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Table, Image, Button, Popconfirm, message } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Image,
+  Button,
+  Popconfirm,
+  message,
+  Card,
+  Typography,
+  Space,
+  Tag,
+  Tooltip,
+} from "antd";
+import {
+  DeleteOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  IdcardOutlined,
+} from "@ant-design/icons";
+
+const { Title } = Typography;
 
 export default function AdminManageGPLX() {
   const [accessToken] = useLocalStorage("access_token");
-  const { data: gplx, refetch } = useQuery({
+  const {
+    data: gplx,
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: [GET_GPLX_KEY],
     queryFn: () => getGPLX(accessToken),
   });
@@ -21,16 +43,125 @@ export default function AdminManageGPLX() {
     (driverId) => deleteDriverLicense(driverId, accessToken),
     {
       onSuccess: () => {
-        message.success("Xoá thành công");
+        message.success("Xóa bằng lái xe thành công");
         refetch();
       },
-
       onError: (error) => {
-        message.error(`Xoá thất bại: ${error.message}`);
+        message.error(`Xóa bằng lái xe thất bại: ${error.message}`);
       },
     }
   );
+
+  const acceptGPLX = useMutation(
+    (driverId) => acceptLicensesDriver(accessToken, driverId),
+    {
+      onSuccess: () => {
+        message.success("Duyệt bằng lái xe thành công");
+        refetch();
+      },
+      onError: (error) => {
+        message.error(`Duyệt bằng lái xe thất bại: ${error.message}`);
+      },
+    }
+  );
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: 60,
+    },
+    {
+      title: "Ảnh bằng lái xe",
+      dataIndex: "img",
+      key: "img",
+      render: (url) => (
+        <Image
+          className="rounded-md object-cover"
+          src={url || "/placeholder.svg"}
+          width={120}
+          height={80}
+          alt="Bằng lái xe"
+        />
+      ),
+    },
+    {
+      title: "Số Bằng lái xe",
+      dataIndex: "drivingLicenseNo",
+      key: "drivingLicenseNo",
+      filterSearch: true,
+      onFilter: (value, record) => record.drivingLicenseNo.startsWith(value),
+    },
+    {
+      title: "Hạng",
+      dataIndex: "class",
+      key: "class",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        { text: "Chưa xác thực", value: "Chưa xác thực" },
+        { text: "Đã xác thực", value: "Đã xác thực" },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (status) => (
+        <Tag
+          color={status === "Đã xác thực" ? "success" : "error"}
+          icon={
+            status === "Đã xác thực" ? (
+              <CheckCircleOutlined />
+            ) : (
+              <CloseCircleOutlined />
+            )
+          }
+        >
+          {status}
+        </Tag>
+      ),
+    },
+    {
+      title: "Thao tác",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Tooltip title="Duyệt bằng lái xe">
+            <Popconfirm
+              title="Bạn có chắc chắn muốn duyệt bằng lái xe này?"
+              onConfirm={() => acceptGPLX.mutate(record.driverId)}
+              okText="Duyệt"
+              cancelText="Hủy"
+            >
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                disabled={record.status === "Đã xác thực"}
+              >
+                Duyệt
+              </Button>
+            </Popconfirm>
+          </Tooltip>
+          <Tooltip title="Xóa bằng lái xe">
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa bằng lái xe này?"
+              onConfirm={() => deleteGPLX.mutate(record.driverId)}
+              okText="Xóa"
+              cancelText="Hủy"
+            >
+              <Button danger icon={<DeleteOutlined />}>
+                Xóa
+              </Button>
+            </Popconfirm>
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ];
+
   const dataSource = gplx?.result.map((item, idx) => ({
+    key: item?._id,
     driverId: item?._id,
     id: idx + 1,
     img: item?.image,
@@ -39,124 +170,27 @@ export default function AdminManageGPLX() {
     status: item?.status,
   }));
 
-  const acceptGPLX = useMutation(
-    (driverId) => acceptLicensesDriver(accessToken, driverId),
-    {
-      onSuccess: () => {
-        message.success("Duyệt thành công");
-        refetch();
-      },
-
-      onError: (error) => {
-        message.error(`Duyệt thất bại: ${error.message}`);
-      },
-    }
-  );
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
   return (
-    <div className="pt-10 px-4">
-      <Table
-        scroll={{ y: 480 }}
-        pagination={{ pageSize: 10 }}
-        columns={[
-          { key: "id", title: "ID", dataIndex: "id", width: "60px" },
-          {
-            key: "img",
-            title: "Ảnh bằng lái xe",
-            dataIndex: "img",
-            render: (url) => (
-              <Image
-                className="h-32 aspect-video rounded-md object-cover"
-                src={url}
-              />
-            ),
-          },
-          {
-            key: "drivingLicenseNo",
-            title: "Số Bằng lái xe",
-            dataIndex: "drivingLicenseNo",
-            filterSearch: true,
-            onFilter: (value, record) =>
-              record.drivingLicenseNo.startsWith(value),
-          },
-          {
-            key: "class",
-            title: "Hạng",
-            dataIndex: "class",
-          },
-          {
-            key: "status",
-            title: "Trạng thái",
-            dataIndex: "status",
-            filters: [
-              {
-                text: "Chưa xác thực",
-                value: "Chưa xác thực",
-              },
-              {
-                text: "Đã xác thực",
-                value: "Đã xác thực",
-              },
-            ],
-            onFilter: (value, record) => record.status.startsWith(value),
-            render: (status) => (
-              <>
-                {status === "Chưa xác thực" ? (
-                  <>
-                    <div className="flex gap-2">
-                      <p className="text-red-500">Chưa xác thực</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex gap-2">
-                      <p className="text-green-500">Đã xác thực</p>
-                    </div>
-                  </>
-                )}
-              </>
-            ),
-          },
-          {
-            key: "action",
-            render: (record) => (
-              <div className="flex gap-2">
-                <Popconfirm
-                  title="Bạn có chắc chắn duyệt bằng lái xe này?"
-                  okText="Duyệt"
-                  cancelText="Hủy"
-                  onConfirm={() => acceptGPLX.mutate(record.driverId)}
-                >
-                  {record.status === "Chưa xác thực" ? (
-                    <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                      Duyệt
-                    </Button>
-                  ) : (
-                    <Button className=" text-white border-none" disabled>
-                      Duyệt
-                    </Button>
-                  )}
-                </Popconfirm>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <Title level={2} className="mb-6">
+          <IdcardOutlined className="mr-2" />
+          Quản lý bằng lái xe
+        </Title>
+      </div>
 
-                <Popconfirm
-                  title="Bạn có chắc chắn xóa bằng lái xe này?"
-                  okText="Xóa"
-                  cancelText="Hủy"
-                  onConfirm={() => deleteGPLX.mutate(record.driverId)}
-                >
-                  <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                    <DeleteOutlined />
-                  </Button>
-                </Popconfirm>
-              </div>
-            ),
-          },
-        ]}
+      <Table
+        columns={columns}
         dataSource={dataSource}
-        rowKey="id"
-        onChange={onChange}
+        rowKey="key"
+        loading={isLoading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `Tổng ${total} bằng lái xe`,
+        }}
+        scroll={{ x: 1000, y: 500 }}
       />
     </div>
   );
