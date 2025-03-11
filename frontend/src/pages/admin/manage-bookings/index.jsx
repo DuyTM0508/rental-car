@@ -12,7 +12,7 @@ import {
   MinusCircleOutlined,
   PlusCircleOutlined,
   SearchOutlined,
-  UploadOutlined
+  UploadOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -26,7 +26,7 @@ import {
   Space,
   Table,
   Tooltip,
-  Upload
+  Upload,
 } from "antd";
 import axios from "axios";
 import React, { useRef, useState } from "react";
@@ -311,10 +311,6 @@ export default function AdminManageBookings() {
 
   const onSubmit = async (values) => {
     try {
-      // setTimeout(() => {
-      //   setOpen(false);
-      // }, 500);
-      // console.log(accessToken);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/contracts/create/${values._id}`,
         { images: values.images },
@@ -344,21 +340,6 @@ export default function AdminManageBookings() {
       setOpen(false);
       refetch();
     }
-    // });
-
-    // });
-
-    // save to file
-    // return result.file.save("/path/to/save/file.pdf");
-
-    // if (!file) {
-    //   message.error("Please upload a file.");
-    //   return;
-    // }
-    // } catch (error) {
-    //   console.error("Error uploading PDF: ", error);
-    //   message.error("Error submitting the form. Please try again later.");
-    // }
   };
 
   const { mutate } = useMutation(onSubmit);
@@ -386,10 +367,6 @@ export default function AdminManageBookings() {
   };
   const handleOk = () => {
     setLoading(true);
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   setOpen(false);
-    // }, 1000);
     setOpen(false);
     refetch();
   };
@@ -447,22 +424,7 @@ export default function AdminManageBookings() {
   return (
     <>
       <div className="pt-14">
-        {/* <div className="mb-4 flex justify-between items-center">
-          <div className="max-w-[30%] flex gap-2 items-center"></div>
-
-          <div>
-            <Button
-              type="primary"
-              icon={<ScanOutlined />}
-              onClick={showModalScanPDF}
-            >
-              {" "}
-              Scan PDF
-            </Button>
-          </div>
-        </div> */}
         <Table
-          // onChange={handleChange}
           scroll={{ x: 2400, y: 460 }}
           columns={[
             { key: "id", title: "ID", dataIndex: "id", width: "4%" },
@@ -731,18 +693,6 @@ export default function AdminManageBookings() {
               >
                 <UploadContract />
               </Form.Item>
-              {/* <Form.Item label="" name="file">
-                <Upload
-                  beforeUpload={beforeUpload}
-                  maxCount={1}
-                  listType="text"
-                  showUploadList={true}
-                >
-                  <Button className="px-8 mt-7 mb-4" icon={<UploadOutlined />}>
-                    Click to upload
-                  </Button>
-                </Upload>
-              </Form.Item> */}
             </div>
           </Form>
         </>

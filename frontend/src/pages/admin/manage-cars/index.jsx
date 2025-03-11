@@ -1,51 +1,55 @@
-import { getBrands } from "@/apis/brands.api";
+"use client";
+
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  changeStatusCar,
-  createCar,
-  getCar,
   getCars,
-  updateCar,
   updateCarStatus,
+  createCar,
+  updateCar,
+  getCar,
 } from "@/apis/cars.api";
+import { getBrands } from "@/apis/brands.api";
 import { getMOdels } from "@/apis/model.api";
-import { UploadImage } from "@/components/UploadImage";
-import { UploadMultipleImage } from "@/components/UploadMultipleImage";
 import {
-  GET_BRANDS_KEY,
   GET_CARS_KEY,
-  GET_CAR_KEY,
+  GET_BRANDS_KEY,
   GET_MODEL_KEY,
+  GET_CAR_KEY,
 } from "@/constants/react-query-key.constant";
 import { AdminLayout } from "@/layouts/AdminLayout";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { useUserState } from "@/recoils/user.state";
 import { formatCurrency } from "@/utils/number.utils";
 import {
-  CloseCircleOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
   Button,
-  Form,
-  Image,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Select,
-  Skeleton,
   Table,
+  Image,
+  Popconfirm,
+  Modal,
+  Input,
+  Typography,
+  Space,
+  Tag,
   Tooltip,
+  Form,
+  Select,
+  InputNumber,
+  Skeleton,
   message,
 } from "antd";
-import { useState } from "react";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { useAccessTokenValue } from "@/recoils/accessToken.state";
-import { updateUserStatus } from "@/apis/admin-staff.api";
+import {
+  PlusOutlined,
+  EditOutlined,
+  SearchOutlined,
+  CarOutlined,
+} from "@ant-design/icons";
+import { UploadImage } from "@/components/UploadImage";
+import { UploadMultipleImage } from "@/components/UploadMultipleImage";
+
+const { Title, Text } = Typography;
 
 function UpsertCarForm({ carId, onOk }) {
-  console.log({ carId });
   const [user] = useUserState();
   const [accessToken] = useLocalStorage("access_token");
   const isInsert = !carId;
@@ -105,8 +109,6 @@ function UpsertCarForm({ carId, onOk }) {
         model: carDetail.data?.result?.model._id,
       }}
       onFinish={async (values) => {
-        console.log(values, carId);
-
         if (isInsert) {
           await apiCreateCar.mutateAsync({
             body: { ...values, user: user.id },
@@ -282,189 +284,177 @@ function UpsertCarForm({ carId, onOk }) {
 
 export default function AdminManageCars() {
   const [upsertCarModal, setUpsertCarModal] = useState();
+  const [searchText, setSearchText] = useState("");
   const [accessToken] = useLocalStorage("access_token");
-  const { data, refetch } = useQuery({
+
+  const { data, refetch, isLoading } = useQuery({
     queryFn: getCars,
     queryKey: [GET_CARS_KEY],
   });
-
-  const dataSource = data?.result?.cars.map((item, idx) => ({
-    id: idx + 1,
-    _id: item?._id,
-    thumb: item?.thumb,
-    brand: item?.brand?.name,
-    model: item?.model?.name,
-    numberSeat: item?.numberSeat,
-    transmissions: item?.transmissions,
-    yearManufacture: item?.yearManufacture,
-    numberCar: item?.numberCar,
-    description: item?.description,
-    cost: formatCurrency(item.cost),
-    owner: item?.user?.fullname,
-    status: item?.status,
-  }));
-
-  const handleInsertCar = () => {
-    setUpsertCarModal({ actionType: "insert" });
-  };
 
   const apiUpdateStatus = useMutation({
     mutationFn: updateCarStatus,
     onSuccess: refetch,
   });
 
-  console.log(upsertCarModal);
-  return (
-    <>
-      <div className="mb-4 flex justify-between items-center">
-        <div>
-          <Button onClick={handleInsertCar}>
-            <PlusOutlined /> Tạo mới xe
-          </Button>
-        </div>
-      </div>
+  const dataSource = data?.result?.cars
+    .map((item, idx) => ({
+      id: idx + 1,
+      _id: item?._id,
+      thumb: item?.thumb,
+      brand: item?.brand?.name,
+      model: item?.model?.name,
+      numberSeat: item?.numberSeat,
+      transmissions: item?.transmissions,
+      yearManufacture: item?.yearManufacture,
+      numberCar: item?.numberCar,
+      description: item?.description,
+      cost: formatCurrency(item.cost),
+      owner: item?.user?.fullname,
+      status: item?.status,
+    }))
+    .filter(
+      (car) =>
+        car.brand.toLowerCase().includes(searchText.toLowerCase()) ||
+        car.model.toLowerCase().includes(searchText.toLowerCase()) ||
+        car.numberCar.toLowerCase().includes(searchText.toLowerCase())
+    );
 
-      <div className="shadow-lg rounded-md">
-        <Table
-          scroll={{ y: 460, x: 2000 }}
-          pagination={{ pageSize: 4 }}
-          columns={[
-            {
-              key: "thumb",
-              title: "Ảnh xe",
-              dataIndex: "thumb",
-              render: (url) => (
-                <Image
-                  className="h-32 aspect-video rounded-md object-cover"
-                  src={url}
-                />
-              ),
-            },
-            { key: "model", title: "Hãng xe", dataIndex: "model" },
-            { key: "numberSeat", title: "Số ghế", dataIndex: "numberSeat" },
-            {
-              key: "transmissions",
-              title: "Truyền động",
-              dataIndex: "transmissions",
-            },
-            {
-              key: "yearManufacture",
-              title: "Năm sản xuất",
-              dataIndex: "yearManufacture",
-            },
-            {
-              key: "numberCar",
-              title: "Biển số xe",
-              dataIndex: "numberCar",
-            },
-            {
-              key: "description",
-              title: "Mô tả",
-              dataIndex: "description",
-            },
-            { key: "cost", title: "Giá", dataIndex: "cost" },
-            // { key: "owner", title: "Owner", dataIndex: "owner" },
-
-            {
-              key: "status",
-              title: "Trạng thái",
-              fixed: "right",
-              dataIndex: "status",
-              width: "8%",
-              render: (status) => (
-                <>
-                  {status === "Hoạt động" ? (
-                    <>
-                      <p className="text-green-500 justify-center">Hoạt động</p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-red-500 justify-center">
-                        Không hoạt động
-                      </p>
-                    </>
-                  )}
-                </>
-              ),
-            },
-            {
-              key: "action",
-              fixed: "right",
-              width: "11%",
-              render: (_, car) => (
-                <div className="flex gap-2">
-                  <Tooltip
-                    placement="top"
-                    title={"Chỉnh sửa xe"}
-                    color="#108ee9"
-                  >
-                    <Button
-                      className="bg-blue-500 text-white border-none hover:bg-blue-500/70"
-                      onClick={() => {
-                        setUpsertCarModal({
-                          actionType: "update",
-                          carId: car._id,
-                        });
-                      }}
-                    >
-                      <EditOutlined />
-                    </Button>
-                  </Tooltip>
-
-                  <div className="flex gap-2">
-                    {car?.status === "Hoạt động" && (
-                      <Popconfirm
-                        title="Bạn có chắc muốn vô hiệu hóa chiếc xe này?"
-                        okText="Vô hiệu hóa"
-                        cancelText="Hủy bỏ"
-                        onConfirm={() => {
-                          apiUpdateStatus.mutateAsync({
-                            accessToken,
-                            carId: car?._id,
-                            status: "Không hoạt động",
-                          });
-                        }}
-                      >
-                        <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                          Vô hiệu hóa
-                        </Button>
-                      </Popconfirm>
-                    )}
-
-                    {car?.status === "Không hoạt động" && (
-                      <Popconfirm
-                        title="Bạn muốn Hủy vô hiệu hóa chiếc xe này?"
-                        okText="Hủy vô hiệu hóa "
-                        cancelText="Hủy bỏ"
-                        onConfirm={() => {
-                          apiUpdateStatus.mutateAsync({
-                            accessToken,
-                            carId: car?._id,
-                            status: "Hoạt động",
-                          });
-                        }}
-                      >
-                        <Button className="bg-green-500 text-white border-none hover:bg-green-500/70">
-                          Hủy vô hiệu hóa
-                        </Button>
-                      </Popconfirm>
-                    )}
-                  </div>
-                </div>
-              ),
-            },
-          ]}
-          dataSource={dataSource}
-          rowKey="id"
+  const columns = [
+    {
+      key: "thumb",
+      title: "Ảnh xe",
+      dataIndex: "thumb",
+      render: (url) => (
+        <Image
+          className="h-24 w-40 object-cover rounded-lg shadow-md"
+          src={url || "/placeholder.svg"}
+          alt="Car"
         />
+      ),
+    },
+    {
+      key: "brand",
+      title: "Hãng xe",
+      dataIndex: "brand",
+      render: (text) => <Text strong>{text}</Text>,
+    },
+    { key: "model", title: "Mẫu xe", dataIndex: "model" },
+    {
+      key: "numberSeat",
+      title: "Số ghế",
+      dataIndex: "numberSeat",
+      render: (text) => <Tag color="blue">{text}</Tag>,
+    },
+    { key: "transmissions", title: "Truyền động", dataIndex: "transmissions" },
+    { key: "yearManufacture", title: "Năm SX", dataIndex: "yearManufacture" },
+    { key: "numberCar", title: "Biển số", dataIndex: "numberCar" },
+    {
+      key: "cost",
+      title: "Giá thuê/ngày",
+      dataIndex: "cost",
+      render: (text) => <Text type="success">{text}</Text>,
+    },
+    {
+      key: "status",
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (status) => (
+        <Tag color={status === "Hoạt động" ? "green" : "red"}>{status}</Tag>
+      ),
+    },
+    {
+      key: "action",
+      title: "Thao tác",
+      fixed: "right",
+      width: "15%",
+      render: (_, car) => (
+        <Space>
+          <Tooltip title="Chỉnh sửa xe">
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setUpsertCarModal({ actionType: "update", carId: car._id });
+              }}
+            >
+              Sửa
+            </Button>
+          </Tooltip>
+          <Popconfirm
+            title={`Bạn muốn ${
+              car.status === "Hoạt động" ? "vô hiệu hóa" : "kích hoạt"
+            } xe này?`}
+            onConfirm={() => {
+              apiUpdateStatus.mutateAsync({
+                accessToken,
+                carId: car._id,
+                status:
+                  car.status === "Hoạt động" ? "Không hoạt động" : "Hoạt động",
+              });
+            }}
+            okText="Xác nhận"
+            cancelText="Hủy"
+          >
+            <Button
+              danger={car.status === "Hoạt động"}
+              type={car.status === "Hoạt động" ? "primary" : "default"}
+            >
+              {car.status === "Hoạt động" ? "Vô hiệu hóa" : "Kích hoạt"}
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
+        <Title level={2} className="m-0">
+          <CarOutlined className="mr-2" />
+          Quản lý xe
+        </Title>
+        <Space>
+          <Input
+            placeholder="Tìm kiếm xe..."
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-64"
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setUpsertCarModal({ actionType: "insert" })}
+          >
+            Thêm xe mới
+          </Button>
+        </Space>
       </div>
+
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        loading={isLoading}
+        scroll={{ x: 1300 }}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `Tổng ${total} xe`,
+        }}
+        className="shadow-sm"
+      />
 
       <Modal
         open={upsertCarModal}
         title={
-          upsertCarModal?.actionType === "insert"
-            ? "Tạo mới xe"
-            : "Chỉnh sửa xe"
+          <Title level={3}>
+            {upsertCarModal?.actionType === "insert"
+              ? "Thêm xe mới"
+              : "Chỉnh sửa thông tin xe"}
+          </Title>
         }
         width={1000}
         style={{ top: 20 }}
@@ -480,7 +470,7 @@ export default function AdminManageCars() {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 }
 

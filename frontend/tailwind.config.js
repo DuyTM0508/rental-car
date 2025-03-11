@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   important: true,
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}", "*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
@@ -11,11 +11,13 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#10b981",
+          dark: "#059669",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "#3b82f6",
+          dark: "#2563eb",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
@@ -38,25 +40,34 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-
-        // Existing colors are preserved below. Consider refactoring to use hsl vars for consistency.
-        primary: {
-          DEFAULT: "#10b981",
-          dark: "#059669",
-        },
-        secondary: {
-          DEFAULT: "#3b82f6",
-          dark: "#2563eb",
+        success: {
+          DEFAULT: "#10b981", // Using the same green as primary
+          foreground: "#ffffff",
         },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
@@ -64,5 +75,4 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
-}
-
+};
