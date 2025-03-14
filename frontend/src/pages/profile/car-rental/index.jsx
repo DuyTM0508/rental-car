@@ -12,7 +12,7 @@ export default function CarRentalPage() {
     queryKey: [GET_HISTORY_BOOKING_KEY],
     queryFn: () => getHistoryBooking(accessToken),
   });
-  console.log(data?.result);
+  console.log(data);
   return (
     <div>
       <div className="mb-20">

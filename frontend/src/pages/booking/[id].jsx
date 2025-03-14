@@ -38,7 +38,6 @@ const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
 const BookingPage = () => {
-
   const [user] = useUserState();
   const router = useRouter();
   const { query } = useRouter();
@@ -47,10 +46,6 @@ const BookingPage = () => {
   const [costGetCar, setCostGetCar] = useState(0);
   const [amountDiscount, setAmountDiscount] = useState(0);
   const [dates, setDates] = useDatesState();
-
-  // Thêm state cho QR code và checkoutUrl
-  const [qrCode, setQrCode] = useState("");
-  const [checkoutUrl, setCheckoutUrl] = useState("");
 
   const [from, setFrom] = useState(
     moment(dates?.[0]?.format("YYYY-MM-DD HH:mm") || undefined)._i
@@ -65,76 +60,73 @@ const BookingPage = () => {
   const [result, setResult] = useState("");
   const [current, setCurrent] = useState(0);
   const [form] = Form.useForm();
+  const [paymentInfo, setPaymentInfo] = useState(null);
 
   const [startDate, endDate] = dates || [null, null];
   const [totalDays, setTotalDays] = useState(
     Math.ceil(endDate?.diff(startDate, "hours") / 24)
   );
   const order = router.query?.vnp_OrderInfo;
-  const orderInfo = order?.split(",:?");
+  const orderInfo = order ? order.split(",:?") : []; // Khởi tạo mặc định là mảng rỗng nếu order undefined
   const [accessToken] = useLocalStorage("access_token");
 
-  useEffect(() => {
-    if (router.query.vnp_TransactionStatus) {
-      if (router.query.vnp_TransactionStatus === "00") {
-        const bookedCar = async () => {
-          try {
-            const response = await axios.post(
-              `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/bookings/${carId}`,
-              {
-                codeTransaction, // cần đảm bảo các biến này được định nghĩa hoặc lấy từ nơi khác
-                totalCost: totalCost / 100,
-                timeTransaction,
-                phone: orderInfo[1],
-                address: orderInfo[2],
-                timeBookingStart: orderInfo[3],
-                timeBookingEnd: orderInfo[4],
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-                withCredentials: true,
-              }
-            );
-            return response.data.result;
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        bookedCar();
-        setResult("Giao Dịch thành công");
-      } else if (router.query.vnp_TransactionStatus === "01") {
-        deleteBookedTimeSlots(accessToken, carId, {
-          timeBookingStart: orderInfo[3],
-          timeBookingEnd: orderInfo[4],
-        });
-        setResult("Giao dịch chưa hoàn tất");
-      } else if (router.query.vnp_TransactionStatus === "02") {
-        deleteBookedTimeSlots(accessToken, carId, {
-          timeBookingStart: orderInfo[3],
-          timeBookingEnd: orderInfo[4],
-        });
-        setResult("Giao dịch bị lỗi");
-      } else if (router.query.vnp_TransactionStatus === "03") {
-        deleteBookedTimeSlots(accessToken, carId, {
-          timeBookingStart: orderInfo[3],
-          timeBookingEnd: orderInfo[4],
-        });
-        setResult(
-          "Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)"
-        );
-      } else {
-        deleteBookedTimeSlots(accessToken, carId, {
-          timeBookingStart: orderInfo[3],
-          timeBookingEnd: orderInfo[4],
-        });
-        setResult("Giao dịch bị nghi ngờ gian lận");
-      }
-      setCurrent(2);
+  // Hàm lưu booking
+  const saveBooking = async () => {
+    const codeTransaction = paymentInfo?.id || carId;
+    const totalCost =
+      paymentInfo?.amount ||
+      (totalDays * data?.cost +
+        costGetCar -
+        ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100) /
+        100;
+    const timeTransaction =
+      paymentInfo?.createdAt || moment().format("YYYYMMDDHHmmss");
+
+    // Lấy thông tin từ form nếu orderInfo không có dữ liệu
+    const formValues = form.getFieldsValue();
+    const phone =
+      orderInfo[1] || formValues.phone || user?.result?.phoneNumber || "";
+    const address =
+      orderInfo[2] || formValues.address || user?.result?.address || "";
+    const timeBookingStart = orderInfo[3] || from;
+    const timeBookingEnd = orderInfo[4] || to;
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/bookings/${carId}`,
+        {
+          codeTransaction,
+          totalCost,
+          timeTransaction,
+          phone,
+          address,
+          timeBookingStart,
+          timeBookingEnd,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("Booking saved:", response.data.result);
+      return response.data.result;
+    } catch (error) {
+      console.error("Error saving booking:", error);
+      throw error;
     }
-  }, [router?.query?.vnp_TransactionStatus]);
+  };
+
+  // Chỉ lưu booking khi result là "Giao Dịch thành công"
+  useEffect(() => {
+    if (result === "Giao dịch thành công" && paymentInfo) {
+      saveBooking().catch((error) => {
+        setResult("Lỗi khi lưu booking, vui lòng liên hệ hỗ trợ");
+      });
+    }
+  }, [result, paymentInfo]);
 
   const { data } = useQuery({
     queryKey: ["getCar", carId],
@@ -156,7 +148,6 @@ const BookingPage = () => {
 
   const onSubmit = async (values) => {
     try {
-      // Gọi API bookRecord trước (nếu cần)
       const response2 = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/bookings/bookRecord/${carId}`,
         { timeBookingStart: from, timeBookingEnd: to },
@@ -173,25 +164,21 @@ const BookingPage = () => {
         return;
       }
 
-      // Tính tổng giá thuê:
-      // totalBeforeDiscount = (số ngày thuê * giá xe) + chi phí nhận xe
-      // Sau đó áp dụng chiết khấu từ amountDiscount
       const totalBeforeDiscount = totalDays * data?.cost + costGetCar;
       const totalAmount =
         totalBeforeDiscount - (totalBeforeDiscount * amountDiscount) / 100;
 
-      // Tạo mảng items với thông tin xe
       const items = [
         {
-          name: data?.model?.name, // Tên xe
-          quantity: totalDays, // Số ngày thuê
-          price: totalAmount, // Tổng giá thuê sau khi áp dụng chiết khấu
+          name: data?.model?.name,
+          quantity: totalDays,
+          price: totalAmount,
         },
       ];
 
-      const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+      const currentUrl =
+        typeof window !== "undefined" ? window.location.href : "";
 
-      // Gọi API tạo payment link với payload gồm totalAmount và items
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/payments/create_payment_url`,
         { currentUrl, totalAmount, items },
@@ -200,7 +187,6 @@ const BookingPage = () => {
         }
       );
 
-      // Nếu API trả về checkoutUrl, chuyển hướng ngay
       if (response.data && response.data.checkoutUrl) {
         window.location.assign(response.data.checkoutUrl);
       } else if (response.request && response.request.responseURL) {
@@ -278,8 +264,8 @@ const BookingPage = () => {
   useEffect(() => {
     const newAmount =
       totalDays * data?.cost +
-      costGetCar -
-      ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
+        costGetCar -
+        ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
 
     form.setFieldsValue({
       amount: newAmount || 0,
@@ -297,8 +283,6 @@ const BookingPage = () => {
     setTotalDays(0);
     setAmountDiscount(0);
     setCurrent(0);
-    setQrCode("");
-    setCheckoutUrl("");
   };
 
   const disabledRangeTime = (_, type) => {
@@ -342,35 +326,56 @@ const BookingPage = () => {
   };
 
   useEffect(() => {
-    // Chỉ chạy khi router đã sẵn sàng
     if (!router.isReady) return;
 
-    const { vnp_TransactionStatus, cancel, status } = router.query;
+    const { cancel, status } = router.query;
 
-    if (vnp_TransactionStatus) {
-      if (vnp_TransactionStatus === "00") {
-        setResult("Giao Dịch thành công");
-      } else if (vnp_TransactionStatus === "01") {
-        setResult("Giao dịch chưa hoàn tất");
-      } else if (vnp_TransactionStatus === "02") {
-        setResult("Giao dịch bị lỗi");
-      } else if (vnp_TransactionStatus === "03") {
-        setResult("Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)");
-      } else {
-        setResult("Giao dịch bị nghi ngờ gian lận");
-      }
-      setCurrent(2);
-    } else if (cancel && status) {
-      // Nếu không có vnp_TransactionStatus mà có cancel và status thì kiểm tra thêm điều kiện
+    // Lấy toàn bộ URL hiện tại
+    const fullUrl = router.asPath;
+    console.log("Full URL:", fullUrl);
+
+    // Trích xuất currentId từ URL
+    const idMatch = fullUrl.match(/&id=([^&]*)/);
+    const currentId = idMatch ? idMatch[1] : null;
+    console.log("Extracted currentId:", currentId);
+
+    if (cancel && status) {
       if (cancel === "true" && status === "CANCELLED") {
         setResult("Giao dịch thất bại");
+        deleteBookedTimeSlots(accessToken, carId, {
+          timeBookingStart: from,
+          timeBookingEnd: to,
+        });
       } else {
         setResult("Giao dịch thành công");
+        // Gọi API bất đồng bộ để lấy thông tin payment link
+        const fetchPaymentInfo = async () => {
+          if (!currentId) {
+            console.error("No currentId extracted from URL");
+            setResult("Lỗi: Không tìm thấy orderId trong URL");
+            return;
+          }
+
+          try {
+            const response = await axios.get(
+              `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/payments/get_payment`,
+              {
+                params: { orderId: currentId },
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+            console.log("Checkout response:", response.data);
+            setPaymentInfo(response.data); // Lưu response vào state
+          } catch (error) {
+            console.error("Error fetching payment info:", error);
+            setResult("Lỗi khi lấy thông tin thanh toán");
+          }
+        };
+        fetchPaymentInfo();
       }
       setCurrent(2);
     }
   }, [router.isReady, router.query]);
-
 
   return (
     <div className="mb-10 max-w-6xl mx-auto">
@@ -388,11 +393,7 @@ const BookingPage = () => {
                 {
                   title: "Thanh toán",
                   icon:
-                    current === 1 ? (
-                      <LoadingOutlined />
-                    ) : (
-                      <PayCircleOutlined />
-                    ),
+                    current === 1 ? <LoadingOutlined /> : <PayCircleOutlined />,
                 },
                 {
                   title: "Kết quả",
@@ -468,9 +469,7 @@ const BookingPage = () => {
                   <p className="text-red-500">{validationMessage}</p>
                 )}
               </Space>
-              <p className="text-gray-400">
-                Tổng Số ngày thuê: {totalDays}{" "}
-              </p>
+              <p className="text-gray-400">Tổng Số ngày thuê: {totalDays} </p>
               <p className="text-gray-400">
                 Giá 1 ngày thuê:{" "}
                 {data?.cost.toLocaleString("it-IT", {
@@ -483,9 +482,9 @@ const BookingPage = () => {
                 Tổng giá thuê:{" "}
                 {(
                   totalDays * data?.cost +
-                  costGetCar -
-                  ((totalDays * data?.cost + costGetCar) * amountDiscount) /
-                  100 || 0
+                    costGetCar -
+                    ((totalDays * data?.cost + costGetCar) * amountDiscount) /
+                      100 || 0
                 ).toLocaleString("it-IT", {
                   style: "currency",
                   currency: "VND",
@@ -557,11 +556,7 @@ const BookingPage = () => {
                       },
                     ]}
                   >
-                    <TextArea
-                      readOnly
-                      rows={3}
-                      placeholder="Địa chỉ giao xe"
-                    />
+                    <TextArea readOnly rows={3} placeholder="Địa chỉ giao xe" />
                   </Form.Item>
                   <Form.Item name="date" label="Thời gian thuê xe">
                     <RangePicker
@@ -596,32 +591,26 @@ const BookingPage = () => {
             </Form>
           </div>
         )}
+        {current === 2 && (
+          <div className="flex justify-center items-start mt-5 text-gray-700">
+            <div className="flex flex-col justify-center items-center mt-5 text-gray-700">
+              {result === "Giao dịch thành công" ? (
+                <CheckCircleOutlined
+                  style={{ fontSize: "35px", color: "#22c12a" }}
+                />
+              ) : (
+                <CloseCircleOutlined
+                  style={{ fontSize: "35px", color: "#c12222" }}
+                />
+              )}
+              <h1>{result}</h1>
+              <Link href="/">
+                <Button type="primary">Trở về trang chủ</Button>
+              </Link>
+            </div>
+          </div>
+        )}
       </>
-      {current === 2 && (
-        <div className="flex justify-center items-start mt-5 text-gray-700">
-          {router.query.vnp_TransactionStatus === "00" ? (
-            <div className="flex flex-col justify-center items-center mt-5 text-gray-700">
-              <CheckCircleOutlined
-                style={{ fontSize: "35px", color: "#22c12a" }}
-              />
-              <h1>{result}</h1>
-              <Link href="/">
-                <Button type="primary">Trở về trang chủ</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center items-center mt-5 text-gray-700">
-              <CloseCircleOutlined
-                style={{ fontSize: "35px", color: "#c12222" }}
-              />
-              <h1>{result}</h1>
-              <Link href="/">
-                <Button type="primary">Trở về trang chủ</Button>
-              </Link>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };
