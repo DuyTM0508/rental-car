@@ -33,7 +33,6 @@ export async function createCar({ body, accessToken }) {
 }
 
 export async function updateCar({ carId, body, accessToken }) {
-  console.log(carId, body);
   const { data } = await apiClient.request({
     method: "PUT",
     url: `/cars/updateCar/${carId}`,

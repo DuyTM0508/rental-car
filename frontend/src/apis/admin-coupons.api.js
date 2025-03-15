@@ -49,7 +49,6 @@ export async function updateCoupon({ couponId, body, accessToken }) {
   return data;
 }
 export async function deleteCoupon(couponId, accessToken) {
-  console.log(couponId);
   const { data } = await apiClient.request({
     method: "DELETE",
     url: `/coupons/deleteCoupon/${couponId}`,

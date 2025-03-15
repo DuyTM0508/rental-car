@@ -65,24 +65,12 @@ export default function AdminDashboard() {
     queryKey: GET_TOTAL_REVENUE_BY_MONTH,
   });
 
-  console.log(revenue);
-  console.log(
-    range(1, 13).map((index) => {
-      const found = revenue?.find((item) => Number(item?.month) === index);
-      console.log(found);
-
-      return found?.totalRevenue ?? 0;
-    })
-  );
-
   const chartData = {
     labels: range(1, 13).map((item) => `Tháng ${item}`),
     datasets: [
       {
         data: range(1, 13).map((index) => {
           const found = revenue?.find((item) => Number(item?.month) === index);
-          console.log(found);
-
           return found?.totalRevenue ?? 0;
           // return random(3000);
         }),

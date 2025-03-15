@@ -36,7 +36,6 @@ export default function EditProfileModal({
   const updateProfile = async (values) => {
     const userId = user?.id;
     try {
-      console.log(userId);
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/update-user/${userId}`,
         values,
@@ -50,8 +49,6 @@ export default function EditProfileModal({
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
-
         setUser((user) => ({
           ...user,
           result: {

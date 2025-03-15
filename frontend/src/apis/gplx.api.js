@@ -25,7 +25,6 @@ export async function acceptLicensesDriver(accessToken, driverId) {
 }
 
 export async function deleteDriverLicense(driverId, accessToken) {
-  console.log(driverId);
   const { data } = await apiClient.request({
     method: "DELETE",
     url: `/drivers/deleteDriver/${driverId}`,

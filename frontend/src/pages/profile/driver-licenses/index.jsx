@@ -49,8 +49,6 @@ export default function DriverPage() {
             },
             withCredentials: true,
           });
-          console.log(data);
-          // Update the Recoil state with the fetched user data
           setUser(data);
         }
       } catch (error) {

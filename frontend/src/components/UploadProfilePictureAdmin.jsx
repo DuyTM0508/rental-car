@@ -20,7 +20,6 @@ export const UploadProfilePictureAdmin = () => {
     const userId = user?.id;
 
     try {
-      console.log(userId);
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/update-user/${userId}`,
         formData,
@@ -34,21 +33,17 @@ export const UploadProfilePictureAdmin = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
-
         setUser({ ...response.data });
 
         notification.success({
           message: "Cập nhật thành công",
         });
       } else {
-        console.log(response.data);
         notification.error({
           message: "Cập nhật không thành công",
         });
       }
     } catch (error) {
-      console.log(error);
       notification.error({
         message: "Có lỗi xảy ra",
       });

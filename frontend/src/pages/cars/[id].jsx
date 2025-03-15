@@ -110,7 +110,7 @@ export default function CarDetailPage() {
     if (user === null) {
       setIsModalOpen(true);
     } else if (
-      user?.result?.driverLicenses.status === "Chưa xác thực" ||
+      user?.result?.driverLicenses?.status === "Chưa xác thực" ||
       user?.result?.driverLicenses === undefined
     ) {
       setIsModalCheckOpen(true);

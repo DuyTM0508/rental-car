@@ -39,7 +39,6 @@ export const UploadImage = ({ value, onChange }) => {
             });
 
             setImage(data?.url);
-            console.log(data?.url);
             onChange?.(data?.url);
           } catch (error) {
             messageApi.error(String(error));

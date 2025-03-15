@@ -45,7 +45,6 @@ export default function RegisterDriverModal({
       });
 
       if (response.status === 200) {
-        console.log(response.data);
         setDriver({ ...response.data });
         setProfile({ ...response.data });
         handleCancleRegisterDriver();

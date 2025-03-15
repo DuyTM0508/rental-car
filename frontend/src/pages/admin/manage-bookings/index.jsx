@@ -78,8 +78,6 @@ export default function AdminManageBookings() {
       .convert("docx", "pdf", params)
       .then(async (result) => {
         let url = result.files[0].Url;
-        console.log(url);
-
         saveAs(url, `${result.files[0].FileName}`);
         message.success("Scan file successfully.");
         setIsModalOpen(false);
@@ -171,7 +169,6 @@ export default function AdminManageBookings() {
             }
             return value;
           }
-          console.log(JSON.stringify({ error: error }, replaceErrors));
 
           if (error.properties && error.properties.errors instanceof Array) {
             const errorMessages = error.properties.errors
