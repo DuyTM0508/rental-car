@@ -1,5 +1,3 @@
-"use client";
-
 import { Feedback } from "@/components/Feedback";
 import { DateRangePicker } from "@/components/antd";
 import useLocalStorage from "@/hooks/useLocalStorage";
