@@ -1,36 +1,35 @@
-import moment from "moment-timezone";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SolutionOutlined,
-  PayCircleOutlined,
-  SmileOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
-import { useMutation } from "@tanstack/react-query";
-import {
-  Button,
-  Form,
-  Input,
-  Typography,
-  Steps,
-  Radio,
-  Space,
-  DatePicker,
-  message,
-} from "antd";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import Image from "next/image";
+import { deleteBookedTimeSlots } from "@/apis/user-bookings.api";
+import Coupon from "@/components/Coupon";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useDatesState } from "@/recoils/dates.state";
 import { useUserState } from "@/recoils/user.state";
-import { deleteBookedTimeSlots } from "@/apis/user-bookings.api";
-import Coupon from "@/components/Coupon";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  LoadingOutlined,
+  PayCircleOutlined,
+  SmileOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Radio,
+  Space,
+  Steps,
+  Typography,
+} from "antd";
+import axios from "axios";
+import dayjs from "dayjs";
+import moment from "moment-timezone";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;

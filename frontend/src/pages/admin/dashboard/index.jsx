@@ -11,19 +11,19 @@ import { AdminLayout } from "@/layouts/AdminLayout";
 import { formatCurrency } from "@/utils/number.utils";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
   BarElement,
-  Title,
-  Tooltip,
+  CategoryScale,
+  Chart as ChartJS,
   Filler,
   Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
 } from "chart.js";
-import { random, range } from "lodash-es";
-import { Bar, Line } from "react-chartjs-2";
+import { range } from "lodash-es";
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,

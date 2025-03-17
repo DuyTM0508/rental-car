@@ -1,24 +1,24 @@
-import React, { useState } from "react";
+import FooterComponent from "@/components/FooterComponent";
+import HeaderComponent from "@/components/HeaderComponent";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useUserState } from "@/recoils/user.state.js";
+import CarLiked from "@/pages/profile/car-liked";
+import CarRental from "@/pages/profile/car-rental/index";
+import ChangePassword from "@/pages/profile/change-password";
+import Driver from "@/pages/profile/driver-licenses/index";
+import Account from "@/pages/profile/index";
 import { useDriverState } from "@/recoils/driver.state";
+import { useUserState } from "@/recoils/user.state.js";
 import {
-  UserOutlined,
   CarFilled,
   HeartOutlined,
-  LogoutOutlined,
   IdcardOutlined,
   KeyOutlined,
+  LogoutOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Tabs, Layout } from "antd";
-import Account from "@/pages/profile/index";
-import Driver from "@/pages/profile/driver-licenses/index";
-import CarRental from "@/pages/profile/car-rental/index";
-import CarLiked from "@/pages/profile/car-liked";
-import HeaderComponent from "@/components/HeaderComponent";
-import FooterComponent from "@/components/FooterComponent";
+import { Layout, Tabs } from "antd";
 import { useRouter } from "next/router";
-import ChangePassword from "@/pages/profile/change-password";
+import React, { useState } from "react";
 
 const { TabPane } = Tabs;
 

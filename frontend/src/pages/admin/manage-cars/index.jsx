@@ -1,49 +1,49 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  getCars,
-  updateCarStatus,
-  createCar,
-  updateCar,
-  getCar,
-} from "@/apis/cars.api";
 import { getBrands } from "@/apis/brands.api";
-import { getMOdels } from "@/apis/model.api";
 import {
-  GET_CARS_KEY,
+  createCar,
+  getCar,
+  getCars,
+  updateCar,
+  updateCarStatus,
+} from "@/apis/cars.api";
+import { getMOdels } from "@/apis/model.api";
+import { UploadImage } from "@/components/UploadImage";
+import { UploadMultipleImage } from "@/components/UploadMultipleImage";
+import {
   GET_BRANDS_KEY,
-  GET_MODEL_KEY,
+  GET_CARS_KEY,
   GET_CAR_KEY,
+  GET_MODEL_KEY,
 } from "@/constants/react-query-key.constant";
-import { AdminLayout } from "@/layouts/AdminLayout";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { AdminLayout } from "@/layouts/AdminLayout";
 import { useUserState } from "@/recoils/user.state";
 import { formatCurrency } from "@/utils/number.utils";
 import {
+  CarOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
   Button,
-  Table,
+  Form,
   Image,
-  Popconfirm,
-  Modal,
   Input,
-  Typography,
+  InputNumber,
+  Modal,
+  Popconfirm,
+  Select,
+  Skeleton,
   Space,
+  Table,
   Tag,
   Tooltip,
-  Form,
-  Select,
-  InputNumber,
-  Skeleton,
+  Typography,
   message,
 } from "antd";
-import {
-  PlusOutlined,
-  EditOutlined,
-  SearchOutlined,
-  CarOutlined,
-} from "@ant-design/icons";
-import { UploadImage } from "@/components/UploadImage";
-import { UploadMultipleImage } from "@/components/UploadMultipleImage";
+import { useState } from "react";
 
 const { Title, Text } = Typography;
 

@@ -1,8 +1,8 @@
 import {
-  upsertStaff,
   getStaffs,
   getUser,
   updateUserStatus,
+  upsertStaff,
 } from "@/apis/admin-staff.api";
 import { UploadImage } from "@/components/UploadImage";
 import { GET_STAFFS } from "@/constants/react-query-key.constant.js";
@@ -10,10 +10,8 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { UserAddOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
-import { Avatar, Button, Form, Input, Modal, Popconfirm, Table } from "antd";
-import { omit } from "lodash-es";
-import { useEffect, useState } from "react";
+import { Avatar, Button, Form, Input, message, Modal, Popconfirm, Table } from "antd";
+import { useState } from "react";
 
 function UpsertStaffForm({ actionType, staffId, onClose }) {
   const [accessToken] = useLocalStorage("access_token");

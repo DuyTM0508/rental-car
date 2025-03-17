@@ -1,9 +1,9 @@
 import { getCarsLiked } from "@/apis/user-cars.api";
 import { CarLikeCard } from "@/components/CarLikeCard";
 import { GET_CARS_LIKED } from "@/constants/react-query-key.constant";
-import { useQuery } from "@tanstack/react-query";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 
 export default function CarLiked() {

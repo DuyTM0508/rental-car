@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { AdminLayout } from "@/layouts/AdminLayout";
+import { UploadProfilePictureAdmin } from "@/components/UploadProfilePictureAdmin";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { AdminLayout } from "@/layouts/AdminLayout";
 import { useUserState } from "@/recoils/user.state.js";
 import { useMutation } from "@tanstack/react-query";
-import moment from "moment";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { UploadProfilePictureAdmin } from "@/components/UploadProfilePictureAdmin";
 import { Button, Form, Input, notification } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import axios from "axios";
+import moment from "moment";
+import { useRouter } from "next/router";
+import React from "react";
 
 export default function AdminProfile() {
   const [user, setUser] = useUserState();

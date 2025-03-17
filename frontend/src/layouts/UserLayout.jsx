@@ -1,11 +1,8 @@
-import { UserFilledIcon } from "@/icons";
-import styled from "@emotion/styled";
-import { Divider, Layout, Menu } from "antd";
-import { useEffect, useState } from "react";
-import HeaderComponent from "@/components/HeaderComponent";
 import FooterComponent from "@/components/FooterComponent";
-import { useRouter } from "next/router";
+import HeaderComponent from "@/components/HeaderComponent";
 import { useUserState } from "@/recoils/user.state";
+import { Layout } from "antd";
+import { useRouter } from "next/router";
 const { Content } = Layout;
 
 export function UserWebLayout({ children }) {

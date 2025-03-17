@@ -1,12 +1,12 @@
 // pages/index.js
-import { useState } from "react";
-import { message, Upload, Button } from "antd";
-import { UploadOutlined, FilePdfOutlined } from "@ant-design/icons";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../firebase.js"; // Import your Firebase storage instance // Thay đổi đường dẫn tùy thuộc vào cấu trúc dự án của bạn
+import { FilePdfOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, message, Upload } from "antd";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import mammoth from "mammoth";
 import pdfmake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import { useState } from "react";
+import { storage } from "../../../firebase.js"; // Import your Firebase storage instance // Thay đổi đường dẫn tùy thuộc vào cấu trúc dự án của bạn
 
 export default function Home() {
   const [file, setFile] = useState(null);

@@ -1,11 +1,8 @@
-import React, { useState } from "react";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-import styled from "@emotion/styled";
-import { GET_DETAIL_BOOKING_KEY } from "@/constants/react-query-key.constant";
 import { getDetailBooking } from "@/apis/user-bookings.api";
-import { Image, Space, Divider, Table } from "antd";
+import { GET_DETAIL_BOOKING_KEY } from "@/constants/react-query-key.constant";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { SeatIcon, TransmissionIcon } from "@/icons";
+import { formatCurrency } from "@/utils/number.utils";
 import {
   ContainerOutlined,
   DownloadOutlined,
@@ -15,9 +12,12 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
 } from "@ant-design/icons";
-import { SeatIcon, TransmissionIcon } from "@/icons";
+import styled from "@emotion/styled";
+import { useQuery } from "@tanstack/react-query";
+import { Divider, Image, Space, Table } from "antd";
 import moment from "moment";
-import { formatCurrency } from "@/utils/number.utils";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
 export default function BookingDetailPage() {
   const BorderlessTable = styled(Table)`

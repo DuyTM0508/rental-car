@@ -1,12 +1,12 @@
-import { Button, Form, Input, Typography } from "antd";
-import Image from "next/image";
-import forgotPassword from "../../../public/forgotPassword.png";
-import styled from "@emotion/styled";
-import { useRouter } from "next/router";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { AuthLayout } from "@/layouts/AuthLayout";
+import styled from "@emotion/styled";
+import { useMutation } from "@tanstack/react-query";
+import { Button, Form, Input, Typography } from "antd";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import forgotPassword from "../../../public/forgotPassword.png";
 
 const { Title } = Typography;
 

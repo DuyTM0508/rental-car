@@ -1,22 +1,20 @@
-import { Avatar, Layout, Menu, Dropdown, Space } from "antd";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { ContractIcon, FinalContractIcon } from "@/icons";
+import { useUserState } from "@/recoils/user.state.js";
 import {
   BellOutlined,
-  UsergroupAddOutlined,
-  CarOutlined,
   BookOutlined,
-  ContactsOutlined,
+  CarOutlined,
   IdcardOutlined,
-  UserOutlined,
   LogoutOutlined,
+  UsergroupAddOutlined,
+  UserOutlined
 } from "@ant-design/icons";
-import { ContractIcon, FinalContractIcon } from "@/icons";
-import { GPLXIcon } from "@/icons";
-import { useRouter } from "next/router";
+import { Avatar, Dropdown, Layout, Menu } from "antd";
 import Image from "next/image";
-import { useUserState } from "@/recoils/user.state.js";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import logo from "../../public/logo.png";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import logo from "../../public/logo.png";
 
 const { Sider, Header, Content } = Layout;
 

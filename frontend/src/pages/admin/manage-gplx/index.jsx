@@ -1,30 +1,29 @@
-import { GET_GPLX_KEY } from "@/constants/react-query-key.constant";
 import {
   acceptLicensesDriver,
-  getGPLX,
   deleteDriverLicense,
+  getGPLX,
 } from "@/apis/gplx.api";
-import { AdminLayout } from "@/layouts/AdminLayout";
+import { GET_GPLX_KEY } from "@/constants/react-query-key.constant";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { AdminLayout } from "@/layouts/AdminLayout";
 import {
-  Table,
-  Image,
-  Button,
-  Popconfirm,
-  message,
-  Card,
-  Typography,
-  Space,
-  Tag,
-  Tooltip,
-} from "antd";
-import {
-  DeleteOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
+  DeleteOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  Button,
+  Image,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+  Typography,
+  message
+} from "antd";
 
 const { Title } = Typography;
 

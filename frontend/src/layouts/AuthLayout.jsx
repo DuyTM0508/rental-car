@@ -1,8 +1,8 @@
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import bgImage from "../../public/bgImage.jpg";
 import { useRouter } from "next/router";
+import bgImage from "../../public/bgImage.jpg";
 
 const { Title } = Typography;
 

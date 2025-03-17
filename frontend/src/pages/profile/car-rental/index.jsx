@@ -1,9 +1,9 @@
-import { CarRentalCard } from "@/components/CardRentalCard";
-import { useQuery } from "@tanstack/react-query";
 import { getHistoryBooking } from "@/apis/user-bookings.api";
+import { CarRentalCard } from "@/components/CardRentalCard";
 import { GET_HISTORY_BOOKING_KEY } from "@/constants/react-query-key.constant";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 
 export default function CarRentalPage() {

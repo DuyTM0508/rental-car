@@ -1,13 +1,11 @@
-import React, { useState } from "react";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useUserState } from "@/recoils/user.state.js";
 import { useDriverState } from "@/recoils/driver.state.js";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import axios from "axios";
-import Image from "next/image";
-import { Button, Input, Form, notification, Typography } from "antd";
+import { useUserState } from "@/recoils/user.state.js";
 import styled from "@emotion/styled";
+import { useMutation } from "@tanstack/react-query";
+import { Button, Form, Input, notification, Typography } from "antd";
+import axios from "axios";
+import React, { useState } from "react";
 
 const { Title } = Typography;
 
