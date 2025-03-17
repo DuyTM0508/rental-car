@@ -1,16 +1,15 @@
-"use client";
 
-import { useState } from "react";
 import { getUsers, updateUserStatus } from "@/apis/admin-staff.api";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { AdminLayout } from "@/layouts/AdminLayout";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Avatar, Button, Input, Modal, Table, Tag } from "antd";
 import {
   SearchOutlined,
   UserDeleteOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Avatar, Button, Input, Modal, Table, Tag } from "antd";
+import { useState } from "react";
 
 export default function AdminManageUsers() {
   const [accessToken] = useLocalStorage("access_token");

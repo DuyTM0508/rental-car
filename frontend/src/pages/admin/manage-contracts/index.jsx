@@ -1,82 +1,57 @@
-"use client";
-import { getBookings } from "@/apis/admin-bookings.api";
-import {
-  GET_BOOKINGS_KEY,
-  GET_CONTRACTS_KEY,
-} from "@/constants/react-query-key.constant";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { formatCurrency } from "@/utils/number.utils";
 import moment from "moment";
 
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../../firebase.js"; // Import your Firebase storage instance
 import axios from "axios";
 
-import { useMutation } from "@tanstack/react-query";
-import dayjs from "dayjs";
+import { getListContracts } from "@/apis/admin-contracts.api.js";
 import {
-  CloudUploadOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  UserAddOutlined,
-  PlusCircleOutlined,
-  UploadOutlined,
-  DeleteOutlined,
-  MinusCircleOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  EyeOutlined,
   DownloadOutlined,
+  ExclamationCircleOutlined,
+  MinusCircleOutlined,
+  PlusCircleOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  Avatar,
-  message,
   Button,
+  DatePicker,
   Form,
   Image,
   Input,
   InputNumber,
+  message,
   Modal,
-  Popconfirm,
-  Select,
-  Table,
-  Upload,
   Space,
-  Tooltip,
-  DatePicker,
+  Table,
+  Tooltip
 } from "antd";
-import { useEffect, useState, useRef } from "react";
-import { getContracts, getListContracts } from "@/apis/admin-contracts.api.js";
-import { Worker } from "@react-pdf-viewer/core";
+import { useEffect, useRef, useState } from "react";
 // Import the main component
-import { Viewer } from "@react-pdf-viewer/core";
 
 // Import the styles
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import Highlighter from "react-highlight-words";
-import { useRouter } from "next/router";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { useAccessTokenValue } from "@/recoils/accessToken.state.js";
-import isBetween from "dayjs/plugin/isBetween";
 import {
-  GET_FINAL_CONTRACTS_KEY,
-  GET_LIST_CONTRACTS_KEY,
+  GET_LIST_CONTRACTS_KEY
 } from "@/constants/react-query-key.constant";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { useRouter } from "next/router";
+import Highlighter from "react-highlight-words";
 // Import styles
+import { UploadContract } from "@/components/UploadContract.jsx";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { useUserState } from "@/recoils/user.state.js";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import Docxtemplater from "docxtemplater";
-import { UploadContract } from "@/components/UploadContract.jsx";
+import { saveAs } from "file-saver";
 import PizZip from "pizzip";
-import { saveAs, FileSaver } from "file-saver";
-import { useUserState } from "@/recoils/user.state.js";
 let PizZipUtils = null;
 if (typeof window !== "undefined") {
   import("pizzip/utils/index.js").then(function (r) {
     PizZipUtils = r;
   });
 }
-import useLocalStorage from "@/hooks/useLocalStorage";
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
 }

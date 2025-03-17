@@ -1,5 +1,3 @@
-"use client";
-
 import { getBrands } from "@/apis/brands.api";
 import { CarCard } from "@/components/CarCard";
 import { GET_BRANDS_KEY } from "@/constants/react-query-key.constant";

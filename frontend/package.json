@@ -37,6 +37,7 @@
     "i18next-http-backend": "^2.4.1",
     "inquirer": "^9.2.11",
     "lodash-es": "^4.17.21",
+    "lucide-react": "^0.482.0",
     "mammoth": "^1.6.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",

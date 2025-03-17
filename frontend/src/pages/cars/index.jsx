@@ -1,27 +1,26 @@
-"use client";
 
+import { getBrands } from "@/apis/brands.api";
+import { getListCars } from "@/apis/user-cars.api";
 import { CarCard } from "@/components/CarCard";
-import React, { useState } from "react";
+import { GET_BRANDS_KEY } from "@/constants/react-query-key.constant";
 import { FilterFilledIcon } from "@/icons";
+import { formatCurrency } from "@/utils/number.utils";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   Button,
+  Drawer,
+  Empty,
   Input,
-  Space,
-  Select,
-  Spin,
-  Slider,
   Modal,
   Radio,
-  Empty,
-  Drawer,
+  Select,
+  Slider,
+  Space,
+  Spin,
 } from "antd";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { getListCars } from "@/apis/user-cars.api";
-import { getBrands } from "@/apis/brands.api";
-import { GET_BRANDS_KEY } from "@/constants/react-query-key.constant";
+import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { formatCurrency } from "@/utils/number.utils";
 
 export default function ListCarsPage() {
   const { query, pathname } = useRouter();

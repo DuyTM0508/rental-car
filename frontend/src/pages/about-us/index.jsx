@@ -1,108 +1,199 @@
-import React from "react";
+import {
+  Car,
+  Users,
+  Clock,
+  Award,
+  MapPin,
+  Globe,
+  Phone,
+  Mail,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function AboutUsPage() {
   return (
-    <section className="py-10 lg:py-20 bg-stone-100 font-poppins">
-      <div className="max-w-6xl py-4 mx-auto lg:py-6 md:px-6">
-        <div className="flex flex-wrap ">
-          <div className="w-full px-4 mb-10 lg:w-1/2 lg:mb-0 ">
+    <section className="py-12 lg:py-24 bg-gradient-to-b from-blue-50 to-white font-poppins">
+      <div className="max-w-6xl mx-auto lg:py-6 md:px-6">
+        <div className="flex flex-wrap">
+          <div className="w-full px-4 mb-10 lg:w-1/2 lg:mb-0">
             <div className="lg:max-w-md">
-              <div className="px-4 pl-4 mb-6 border-l-4 border-blue-500">
-                <span className="text-sm text-gray-600 uppercase">Who we are?</span>
-                <h1 className="mt-2 text-3xl font-black text-gray-700 md:text-5xl">About Us</h1>
+              <div className="px-4 pl-4 mb-6 border-l-4 border-blue-600">
+                <span className="text-sm text-blue-600 uppercase font-semibold">
+                  Về Chúng Tôi
+                </span>
+                <h1 className="mt-2 text-3xl font-black text-gray-800 md:text-5xl">
+                  Hành Trình Cùng Bạn, Mọi Nẻo Đường
+                </h1>
               </div>
-              <p className="px-4 mb-10 text-base leading-7 text-gray-500">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam Lorem ipsum dolor sit amet.
+              <p className="px-4 mb-8 text-base leading-7 text-gray-600">
+                Chào mừng bạn đến với dịch vụ của chúng tôi, nơi mang đến những
+                trải nghiệm thuê xe nhanh chóng, tiện lợi và đáng tin cậy! Chúng
+                tôi hiểu rằng mỗi chuyến đi đều là một hành trình đáng nhớ, và
+                nhiệm vụ của chúng tôi là giúp bạn tận hưởng nó một cách trọn
+                vẹn nhất.
               </p>
-              <div className="flex flex-wrap items-center">
-                <div className="w-full px-4 mb-6 sm:w-1/2 md:w-1/2 lg:mb-6">
-                  <div className="p-6 bg-white">
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        className="w-10 h-10"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z" />
-                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
-                      </svg>
+
+              <div className="px-4 mb-8">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Tại Sao Chọn Chúng Tôi?
+                </h2>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 mt-1">
+                      <Car className="w-5 h-5" />
                     </span>
-                    <p className="mt-4 mb-2 text-3xl font-bold text-gray-700">2097</p>
-                    <h2 className="text-sm text-gray-700">Projects and Plans</h2>
-                  </div>
+                    <span className="text-gray-700">
+                      <span className="font-semibold">Đa Dạng Dòng Xe</span> –
+                      Từ xe tiết kiệm nhiên liệu đến dòng xe cao cấp, chúng tôi
+                      luôn có lựa chọn phù hợp cho mọi nhu cầu của bạn.
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 mt-1">
+                      <Clock className="w-5 h-5" />
+                    </span>
+                    <span className="text-gray-700">
+                      <span className="font-semibold">Dịch Vụ Linh Hoạt</span> –
+                      Thuê xe dễ dàng, đặt xe nhanh chóng, giao nhận tận nơi
+                      theo yêu cầu.
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 mt-1">
+                      <Award className="w-5 h-5" />
+                    </span>
+                    <span className="text-gray-700">
+                      <span className="font-semibold">Giá Cả Cạnh Tranh</span> –
+                      Chính sách giá minh bạch, không phí ẩn, đảm bảo mức giá
+                      tốt nhất cho khách hàng.
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 mt-1">
+                      <Users className="w-5 h-5" />
+                    </span>
+                    <span className="text-gray-700">
+                      <span className="font-semibold">
+                        Đội Ngũ Chuyên Nghiệp
+                      </span>{" "}
+                      – Đội ngũ tư vấn tận tâm, sẵn sàng hỗ trợ 24/7 để giúp bạn
+                      có trải nghiệm tốt nhất.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="px-4 mb-8">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Sứ Mệnh Của Chúng Tôi
+                </h2>
+                <p className="text-gray-600 leading-7">
+                  Chúng tôi không chỉ cho thuê xe – chúng tôi đồng hành cùng bạn
+                  trên mọi hành trình. Dù bạn đang có chuyến công tác, du lịch
+                  cùng gia đình hay đơn giản chỉ cần một phương tiện di chuyển
+                  thoải mái, chúng tôi luôn sẵn sàng phục vụ.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 px-4">
+                <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-blue-600">
+                    <Car className="w-10 h-10" />
+                  </span>
+                  <p className="mt-4 mb-2 text-3xl font-bold text-gray-800">
+                    50+
+                  </p>
+                  <h2 className="text-sm text-gray-700">Dòng Xe Đa Dạng</h2>
                 </div>
-                <div className="w-full px-4 mb-6 sm:w-1/2 md:w-1/2 lg:mb-6">
-                  <div className="p-6 bg-white">
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        className="w-10 h-10"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                        <path
-                          fillRule="evenodd"
-                          d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"
-                        />
-                        <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
-                      </svg>
-                    </span>
-                    <p className="mt-4 mb-2 text-3xl font-bold text-gray-700">3,590</p>
-                    <h2 className="text-sm text-gray-700">Helped people</h2>
-                  </div>
+                <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-blue-600">
+                    <Users className="w-10 h-10" />
+                  </span>
+                  <p className="mt-4 mb-2 text-3xl font-bold text-gray-800">
+                    3,590+
+                  </p>
+                  <h2 className="text-sm text-gray-700">Khách Hàng Hài Lòng</h2>
                 </div>
-                <div className="w-full px-4 mb-6 sm:w-1/2 md:w-1/2 lg:mb-6">
-                  <div className="p-6 bg-white">
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        className="w-10 h-10"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                      </svg>
-                    </span>
-                    <p className="mt-4 mb-2 text-3xl font-bold text-gray-700">74</p>
-                    <h2 className="text-sm text-gray-700">Volunteer</h2>
-                  </div>
+                <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-blue-600">
+                    <Award className="w-10 h-10" />
+                  </span>
+                  <p className="mt-4 mb-2 text-3xl font-bold text-gray-800">
+                    10+
+                  </p>
+                  <h2 className="text-sm text-gray-700">Năm Kinh Nghiệm</h2>
                 </div>
-                <div className="w-full px-4 mb-6 sm:w-1/2 md:w-1/2 lg:mb-6">
-                  <div className="p-6 bg-white">
-                    <span className="text-blue-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={16}
-                        height={16}
-                        className="w-10 h-10"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5zm2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.035 8.035 0 0 0 .86 5.387zM11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.035 8.035 0 0 0-3.527-3.527z" />
-                      </svg>
-                    </span>
-                    <p className="mt-4 mb-2 text-3xl font-bold text-gray-700">100</p>
-                    <h2 className="text-sm text-gray-700">Timing</h2>
-                  </div>
+                <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                  <span className="text-blue-600">
+                    <MapPin className="w-10 h-10" />
+                  </span>
+                  <p className="mt-4 mb-2 text-3xl font-bold text-gray-800">
+                    15+
+                  </p>
+                  <h2 className="text-sm text-gray-700">Chi Nhánh</h2>
                 </div>
               </div>
             </div>
           </div>
           <div className="w-full px-4 mb-10 lg:w-1/2 lg:mb-0">
-            <img
-              src="https://i.postimg.cc/9MW8G96J/pexels-the-coach-space-2977565.jpg"
-              alt=""
-              className="relative z-40 object-cover w-full h-full rounded"
-            />
+            <div className="relative">
+              <img
+                src="https://i.postimg.cc/9MW8G96J/pexels-the-coach-space-2977565.jpg"
+                alt="Đội ngũ chuyên nghiệp"
+                className="object-cover w-full h-full rounded-lg shadow-2xl"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg">
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  🚀 Hãy để chúng tôi giúp bạn bắt đầu chuyến đi tuyệt vời ngay
+                  hôm nay!
+                </h3>
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center text-white">
+                    <Globe className="w-5 h-5 mr-3" />
+                    <span>
+                      Website:{" "}
+                      <Link href="#" className="underline hover:text-blue-300">
+                        www.example.com
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="flex items-center text-white">
+                    <Phone className="w-5 h-5 mr-3" />
+                    <span>
+                      Hotline:{" "}
+                      <Link
+                        href="tel:+84123456789"
+                        className="underline hover:text-blue-300"
+                      >
+                        082-858-2003
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="flex items-center text-white">
+                    <Mail className="w-5 h-5 mr-3" />
+                    <span>
+                      Email:{" "}
+                      <Link href="#" className="underline hover:text-blue-300">
+                        duytmhe176217@fpt.edu.vn
+                      </Link>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 p-6 bg-blue-600 rounded-lg shadow-lg text-white">
+              <h3 className="text-xl font-bold mb-4">Đặt Xe Ngay Hôm Nay</h3>
+              <p className="mb-4">
+                Chỉ với vài bước đơn giản, bạn đã có thể thuê xe và bắt đầu hành
+                trình của mình.
+              </p>
+              <Link
+                href="/cars"
+                className="inline-block px-6 py-3 bg-white text-red-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Đặt Xe Ngay
+              </Link>
+            </div>
           </div>
         </div>
       </div>
