@@ -89,8 +89,8 @@ const BookingPage = () => {
                 totalCost: totalCost,
                 phone: orderInfo[1] || "",
                 address: orderInfo[2] || "",
-                from: orderInfo[3] || "",
-                to: orderInfo[4] || "",
+                timeBookingStart: orderInfo[3] || "",
+                timeBookingEnd: orderInfo[4] || "",
               },
               {
                 headers: {
@@ -111,10 +111,11 @@ const BookingPage = () => {
         deleteBookedTimeSlots(accessToken, carId, {
           timeBookingStart: orderInfo[3],
           timeBookingEnd: orderInfo[4],
-        })};setCurrent(2);
+        })
+      }; setCurrent(2);
     }
   }, [router?.query?.status]);
-  
+
   const { data, error } = useQuery({
     queryKey: ["getCar", carId],
     queryFn: async () => {
@@ -148,22 +149,25 @@ const BookingPage = () => {
           withCredentials: true,
         }
       );
-  
+
       if (response2.status !== 200) {
         return message.error("Thời gian đã được chọn. Vui lòng chọn ngày khác!");
       }
-  
+
       console.log("Booking response:", response2);
-  
+
       // Gửi yêu cầu thanh toán
+      const requestData = { ...values, from, to, id: data?._id };
+      console.log("From" + from+ "To : "+ to); // Kiểm tra dữ liệu trước khi gửi
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/payments/zalopay_payment_url`,
-        { ...values, from, to, id: data?._id },
+        requestData,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-  
+
       if (response.status === 200 && response.data?.data?.order_url) {
         window.location.assign(response.data.data.order_url);
       } else {
@@ -246,8 +250,8 @@ const BookingPage = () => {
   useEffect(() => {
     const newAmount =
       totalDays * data?.cost +
-        costGetCar -
-        ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
+      costGetCar -
+      ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
 
     form.setFieldsValue({
       amount: newAmount || 0,
@@ -402,7 +406,7 @@ const BookingPage = () => {
                   disabledTime={disabledRangeTime}
                   defaultValue={[startDate, endDate]}
 
-                  // locale={locale}
+                // locale={locale}
                 />
                 {validationMessage && (
                   <p className="text-red-500">{validationMessage}</p>
@@ -421,9 +425,9 @@ const BookingPage = () => {
                 Tổng giá thuê:{" "}
                 {(
                   totalDays * data?.cost +
-                    costGetCar -
-                    ((totalDays * data?.cost + costGetCar) * amountDiscount) /
-                      100 || 0
+                  costGetCar -
+                  ((totalDays * data?.cost + costGetCar) * amountDiscount) /
+                  100 || 0
                 ).toLocaleString("it-IT", {
                   style: "currency",
                   currency: "VND",
