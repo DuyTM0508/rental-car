@@ -75,7 +75,9 @@ const BookingPage = () => {
   const [accessToken] = useLocalStorage("access_token");
 
   // Lấy thông tin đơn hàng từ query string
-  const orderInfo = router.query?.vnp_OrderInfo ? router.query.vnp_OrderInfo.split(",:?") : [];
+  const orderInfo = router.query?.vnp_OrderInfo
+    ? router.query.vnp_OrderInfo.split(",:?")
+    : [];
 
   useEffect(() => {
     if (router.query.status) {
@@ -111,8 +113,9 @@ const BookingPage = () => {
         deleteBookedTimeSlots(accessToken, carId, {
           timeBookingStart: orderInfo[3],
           timeBookingEnd: orderInfo[4],
-        })
-      }; setCurrent(2);
+        });
+      }
+      setCurrent(2);
     }
   }, [router?.query?.status]);
 
@@ -151,14 +154,16 @@ const BookingPage = () => {
       );
 
       if (response2.status !== 200) {
-        return message.error("Thời gian đã được chọn. Vui lòng chọn ngày khác!");
+        return message.error(
+          "Thời gian đã được chọn. Vui lòng chọn ngày khác!"
+        );
       }
 
       console.log("Booking response:", response2);
 
       // Gửi yêu cầu thanh toán
       const requestData = { ...values, from, to, id: data?._id };
-      console.log("From" + from+ "To : "+ to); // Kiểm tra dữ liệu trước khi gửi
+      console.log("From" + from + "To : " + to); // Kiểm tra dữ liệu trước khi gửi
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/payments/zalopay_payment_url`,
@@ -250,14 +255,14 @@ const BookingPage = () => {
   useEffect(() => {
     const newAmount =
       totalDays * data?.cost +
-      costGetCar -
-      ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
+        costGetCar -
+        ((totalDays * data?.cost + costGetCar) * amountDiscount) / 100 || 0;
 
     form.setFieldsValue({
       amount: newAmount || 0,
       address:
         costGetCar === 0
-          ? "88 Đ. Phạm Văn Nghị, Vĩnh Trung, Thanh Khê, Đà Nẵng(công ty CRT)"
+          ? "Km 29, trường đại học FPT, xã Thạch Hoà, huyện Thạch Thất, Hà Nội"
           : `${user?.result?.address || ""}`,
     });
   }, [totalDays, data?.cost, costGetCar, amountDiscount]);
@@ -383,11 +388,11 @@ const BookingPage = () => {
                 <Radio.Group onChange={onChange} value={costGetCar}>
                   <Space direction="vertical">
                     <Radio value={0}>
-                      88 Đ. Phạm Văn Nghị, Vĩnh Trung, Thanh Khê, Đà Nẵng
-                      550000(công ty CRT)
+                      Km 29, trường đại học FPT, xã Thạch Hoà, huyện Thạch Thất,
+                      Hà Nội
                     </Radio>
                     <Radio value={150000}>
-                      Giao Tận nơi trong Thành phố Đà Nẵng (thêm 150k)
+                      Giao Tận nơi trong Thành phố Hà Nội (thêm 150k)
                     </Radio>
                   </Space>
                 </Radio.Group>
@@ -406,7 +411,7 @@ const BookingPage = () => {
                   disabledTime={disabledRangeTime}
                   defaultValue={[startDate, endDate]}
 
-                // locale={locale}
+                  // locale={locale}
                 />
                 {validationMessage && (
                   <p className="text-red-500">{validationMessage}</p>
@@ -425,9 +430,9 @@ const BookingPage = () => {
                 Tổng giá thuê:{" "}
                 {(
                   totalDays * data?.cost +
-                  costGetCar -
-                  ((totalDays * data?.cost + costGetCar) * amountDiscount) /
-                  100 || 0
+                    costGetCar -
+                    ((totalDays * data?.cost + costGetCar) * amountDiscount) /
+                      100 || 0
                 ).toLocaleString("it-IT", {
                   style: "currency",
                   currency: "VND",

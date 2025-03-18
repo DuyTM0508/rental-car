@@ -352,7 +352,7 @@ export default function HomePage() {
 
             <p className="text-gray-600 leading-relaxed">
               CRT đặt mục tiêu trở thành cộng động người dùng ô tô Văn minh & Uy
-              tín #1 tại Đà Nẵng, nhằm mang lại những giá trị thiết thực cho tất
+              tín #1 tại Hà Nội, nhằm mang lại những giá trị thiết thực cho tất
               cả những thành viên hướng đến một cuộc sống tốt đẹp hơn.
             </p>
 
@@ -581,7 +581,7 @@ export default function HomePage() {
               Bạn muốn biết thêm thông tin về chúng tôi?
             </h3>
             <p className="text-gray-600 mb-8 max-w-md">
-              CRT mang lại một ứng dụng cho thuê xe tự lái ở Đà Nẵng và sẽ mở
+              CRT mang lại một ứng dụng cho thuê xe tự lái ở Hà Nội và sẽ mở
               rộng ra hơn khắp Việt Nam trong thời gian tới. CRT mong rằng sẽ
               đem lại trải nghiệp thuê xe tự lái một cách an toàn và chuyên
               nghiệp nhất

@@ -350,7 +350,7 @@ export default function CarDetailPage() {
 
               <div className="flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full">
                 <MapIcon className="text-blue-500" />
-                <span className="font-medium">Ngũ Hành Sơn, Đà Nẵng</span>
+                <span className="font-medium">Hà Nội</span>
               </div>
             </div>
 
