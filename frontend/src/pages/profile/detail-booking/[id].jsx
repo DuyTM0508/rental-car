@@ -31,11 +31,12 @@ export default function BookingDetailPage() {
   `;
   const router = useRouter();
   const bookingId = router.query.id;
+  console.log(bookingId);
   const [accessToken] = useLocalStorage("access_token");
 
   const { data } = useQuery({
     queryKey: [GET_DETAIL_BOOKING_KEY, bookingId],
-    queryFn: () => getDetailBooking(accessToken, bookingId),
+    queryFn: () => getDetailBooking(accessToken, bookingId.toString()),
   });
 
   const onDownload = () => {

@@ -175,7 +175,7 @@ export default function ChangePassword({}) {
 
             <Form.Item>
               <ButtonSummit type="primary" htmlType="submit">
-                Cập nhập
+                Cập nhật
               </ButtonSummit>
             </Form.Item>
           </Form>
