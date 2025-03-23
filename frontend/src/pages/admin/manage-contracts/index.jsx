@@ -6,12 +6,13 @@ import axios from "axios";
 
 import { getListContracts } from "@/apis/admin-contracts.api.js";
 import {
+  CarOutlined,
   CheckCircleOutlined,
   DownloadOutlined,
   ExclamationCircleOutlined,
   MinusCircleOutlined,
   PlusCircleOutlined,
-  SearchOutlined
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -25,15 +26,14 @@ import {
   Modal,
   Space,
   Table,
-  Tooltip
+  Tooltip,
+  Typography,
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 // Import the main component
 
 // Import the styles
-import {
-  GET_LIST_CONTRACTS_KEY
-} from "@/constants/react-query-key.constant";
+import { GET_LIST_CONTRACTS_KEY } from "@/constants/react-query-key.constant";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { useRouter } from "next/router";
@@ -47,6 +47,9 @@ import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import PizZip from "pizzip";
 let PizZipUtils = null;
+
+const { Title, Text } = Typography;
+
 if (typeof window !== "undefined") {
   import("pizzip/utils/index.js").then(function (r) {
     PizZipUtils = r;
@@ -461,239 +464,202 @@ export default function AdminManageContracts() {
     status: item?.status,
   }));
 
+  const columns = [
+    { key: "id", title: "ID", dataIndex: "id", width: "4%" },
+    {
+      key: "image",
+      title: "Ảnh hợp đồng",
+      dataIndex: "image",
+
+      render: (images) => (
+        <Image.PreviewGroup
+          preview={{
+            onChange: (current, prev) =>
+              console.log(`current index: ${current}, prev index: ${prev}`),
+          }}
+          items={images}
+        >
+          <Image
+            className="h-32 aspect-video rounded-md object-cover"
+            src={images[0]}
+          />
+        </Image.PreviewGroup>
+      ),
+    },
+    {
+      key: "bookBy",
+      title: "Tên Khách Hàng",
+      dataIndex: "bookBy",
+      ...getColumnSearchProps("bookBy"),
+    },
+
+    {
+      key: "email",
+      title: "Email",
+      dataIndex: "email",
+      ...getColumnSearchProps("email"),
+    },
+
+    {
+      key: "phone",
+      title: "Số Điện Thoại",
+      dataIndex: "phone",
+      ...getColumnSearchProps("phone"),
+    },
+    {
+      key: "addres",
+      title: "Điạ Chỉ",
+      dataIndex: "address",
+      ...getColumnSearchProps("address"),
+    },
+    {
+      key: "totalCost",
+      title: "Tổng Số Tiền",
+      dataIndex: "totalCost",
+    },
+    {
+      key: "timeBookingStart",
+      title: "Thời Gian Bắt Đầu",
+      dataIndex: "timeBookingStart",
+    },
+    {
+      key: "timeBookingEnd",
+      title: "Thời Gian Kết Thúc",
+      dataIndex: "timeBookingEnd",
+    },
+    {
+      key: "status",
+      title: "Trạng Thái",
+      dataIndex: "status",
+      width: "8%",
+      filters: [
+        {
+          text: "Đang thực hiện",
+          value: "Đang thực hiện",
+        },
+        {
+          text: "Đã tất toán",
+          value: "Đã tất toán",
+        },
+      ],
+
+      onFilter: (value, record) => record.status.includes(value),
+
+      fixed: "right",
+      render: (status) => (
+        <>
+          {status === "Đang thực hiện" ? (
+            <>
+              <p className="text-blue-500 flex justify-center">
+                <MinusCircleOutlined
+                  style={{
+                    color: "blue",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Đang Thực Hiện
+              </p>
+            </>
+          ) : status === "Đã tất toán" ? (
+            <>
+              <p className="text-green-600 flex justify-center">
+                <CheckCircleOutlined
+                  style={{
+                    color: "green",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Đã Tất Toán
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-red-500 flex justify-center">
+                <ExclamationCircleOutlined
+                  style={{
+                    color: "red",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Đã Hủy
+              </p>
+            </>
+          )}
+        </>
+      ),
+    },
+    {
+      key: "action",
+      fixed: "right",
+      width: "6%",
+      render: (_, contract) => (
+        <div className="flex gap-2">
+          {contract.status === "Đã tất toán" ? (
+            <Button
+              type="primary"
+              className=" border border-solid  "
+              onClick={() => showModal(contract)}
+              disabled
+            >
+              <PlusCircleOutlined style={{ fontSize: "14px" }} />
+            </Button>
+          ) : (
+            <Tooltip
+              placement="topLeft"
+              title={"Tạo hợp đồng tất toán"}
+              color={"rgb(74 222 128)"}
+            >
+              <Button
+                type="primary"
+                className=" border border-solid border-green-400 "
+                onClick={() => showModal(contract)}
+              >
+                <PlusCircleOutlined style={{ fontSize: "14px" }} />
+              </Button>
+            </Tooltip>
+          )}
+
+          <Tooltip
+            placement="top"
+            title={"Tải file để tạo hợp đồng tất toán"}
+            color="cyan"
+          >
+            <Button
+              className=" border border-solid border-green-400 bg-cyan-400"
+              onClick={() => generateDocument(contract)}
+            >
+              <DownloadOutlined style={{ fontSize: "14px" }} />
+            </Button>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
+        <Title level={2} className="m-0">
+          <CarOutlined className="mr-2" />
+          Quản lý hợp đồng
+        </Title>
+      </div>
       <div className="mt-4 shadow-lg rounded-lg">
         <Table
           onChange={handleChange}
-          scroll={{ x: 2300, y: 500 }}
-          columns={[
-            { key: "id", title: "ID", dataIndex: "id", width: "4%" },
-            {
-              key: "image",
-              title: "Ảnh hợp đồng",
-              dataIndex: "image",
-
-              render: (images) => (
-                <Image.PreviewGroup
-                  preview={{
-                    onChange: (current, prev) =>
-                      console.log(
-                        `current index: ${current}, prev index: ${prev}`
-                      ),
-                  }}
-                  items={images}
-                >
-                  <Image
-                    className="h-32 aspect-video rounded-md object-cover"
-                    src={images[0]}
-                  />
-                </Image.PreviewGroup>
-              ),
-            },
-            // {
-            //   key: "createBy",
-            //   title: "Người Tạo Hợp Đồng",
-            //   dataIndex: "createBy",
-            //   ...getColumnSearchProps("createBy"),
-            // },
-            {
-              key: "bookBy",
-              title: "Tên Khách Hàng",
-              dataIndex: "bookBy",
-              ...getColumnSearchProps("bookBy"),
-            },
-
-            {
-              key: "email",
-              title: "Email",
-              dataIndex: "email",
-              ...getColumnSearchProps("email"),
-            },
-
-            {
-              key: "phone",
-              title: "Số Điện Thoại",
-              dataIndex: "phone",
-              ...getColumnSearchProps("phone"),
-            },
-            {
-              key: "addres",
-              title: "Điạ Chỉ",
-              dataIndex: "address",
-              ...getColumnSearchProps("address"),
-            },
-            {
-              key: "totalCost",
-              title: "Tổng Số Tiền",
-              dataIndex: "totalCost",
-            },
-            {
-              key: "timeBookingStart",
-              title: "Thời Gian Bắt Đầu",
-              dataIndex: "timeBookingStart",
-            },
-            {
-              key: "timeBookingEnd",
-              title: "Thời Gian Kết Thúc",
-              dataIndex: "timeBookingEnd",
-            },
-
-            // {
-            //   key: "thumb",
-            //   title: "Thumbnail",
-            //   dataIndex: "thumb",
-            //   render: (url) => (
-            //     <div>
-            //       <Document file={url} onLoadSuccess={onDocumentLoadSuccess}>
-            //         <Page pageNumber={pageNumber} />
-            //       </Document>
-            //       <p>
-            //         Page {pageNumber} of {numPages}
-            //       </p>
-            //     </div>
-            //   ),
-            //  },
-
-            {
-              key: "status",
-              title: "Trạng Thái",
-              dataIndex: "status",
-              width: "8%",
-              filters: [
-                {
-                  text: "Đang thực hiện",
-                  value: "Đang thực hiện",
-                },
-                {
-                  text: "Đã tất toán",
-                  value: "Đã tất toán",
-                },
-              ],
-
-              onFilter: (value, record) => record.status.includes(value),
-
-              fixed: "right",
-              render: (status) => (
-                <>
-                  {status === "Đang thực hiện" ? (
-                    <>
-                      <p className="text-blue-500 flex justify-center">
-                        <MinusCircleOutlined
-                          style={{
-                            color: "blue",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Đang Thực Hiện
-                      </p>
-                    </>
-                  ) : status === "Đã tất toán" ? (
-                    <>
-                      <p className="text-green-600 flex justify-center">
-                        <CheckCircleOutlined
-                          style={{
-                            color: "green",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Đã Tất Toán
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-red-500 flex justify-center">
-                        <ExclamationCircleOutlined
-                          style={{
-                            color: "red",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Đã Hủy
-                      </p>
-                    </>
-                  )}
-                </>
-              ),
-            },
-
-            {
-              key: "action",
-              fixed: "right",
-              width: "6%",
-              render: (_, contract) => (
-                <div className="flex gap-2">
-                  {contract.status === "Đã tất toán" ? (
-                    <Button
-                      type="primary"
-                      className=" border border-solid  "
-                      onClick={() => showModal(contract)}
-                      disabled
-                    >
-                      <PlusCircleOutlined style={{ fontSize: "14px" }} />
-                    </Button>
-                  ) : (
-                    <Tooltip
-                      placement="topLeft"
-                      title={"Tạo hợp đồng tất toán"}
-                      color={"rgb(74 222 128)"}
-                    >
-                      <Button
-                        type="primary"
-                        className=" border border-solid border-green-400 "
-                        onClick={() => showModal(contract)}
-                      >
-                        <PlusCircleOutlined style={{ fontSize: "14px" }} />
-                      </Button>
-                    </Tooltip>
-                  )}
-
-                  <Tooltip
-                    placement="top"
-                    title={"Tải file để tạo hợp đồng tất toán"}
-                    color="cyan"
-                  >
-                    <Button
-                      className=" border border-solid border-green-400 bg-cyan-400"
-                      onClick={() => generateDocument(contract)}
-                    >
-                      <DownloadOutlined style={{ fontSize: "14px" }} />
-                    </Button>
-                  </Tooltip>
-                </div>
-
-                // <div className="flex gap-2">
-                //   <Button
-                //     type="primary"
-                //     className=" border border-solid border-green-400 "
-                //     onClick={() => showModalView(contract)}
-                //   >
-                //     <EyeOutlined style={{ fontSize: "14px" }} />
-                //   </Button>
-                //   <Button
-                //     type="primary"
-                //     className=" border border-solid border-green-400 "
-                //     onClick={() => showModal(contract)}
-                //   >
-                //     <PlusCircleOutlined style={{ fontSize: "14px" }} />
-                //   </Button>
-                //   <Popconfirm
-                //     title="Are you sure to deactivate this car?"
-                //     okText="Deactivate"
-                //   >
-                //     <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                //       <DeleteOutlined style={{ fontSize: "14px" }} />
-                //     </Button>
-                //   </Popconfirm>
-                // </div>
-              ),
-            },
-          ]}
+          scroll={{ x: 768, y: 500 }}
+          columns={columns}
           dataSource={dataSource}
           rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `Tổng ${total} hợp đồng`,
+          }}
         />
       </div>
       <Modal
@@ -800,7 +766,7 @@ export default function AdminManageContracts() {
           </Form>
         </>
       </Modal>
-    </>
+    </div>
   );
 }
 

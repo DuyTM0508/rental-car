@@ -5,6 +5,7 @@ import { formatCurrency } from "@/utils/number.utils";
 import moment from "moment";
 
 import {
+  CarOutlined,
   CheckCircleOutlined,
   DeleteOutlined,
   DownloadOutlined,
@@ -26,6 +27,7 @@ import {
   Space,
   Table,
   Tooltip,
+  Typography,
   Upload,
 } from "antd";
 import axios from "axios";
@@ -41,6 +43,9 @@ import { useRouter } from "next/router";
 import PizZip from "pizzip";
 import Highlighter from "react-highlight-words";
 let PizZipUtils = null;
+
+const { Title, Text } = Typography;
+
 if (typeof window !== "undefined") {
   import("pizzip/utils/index.js").then(function (r) {
     PizZipUtils = r;
@@ -377,8 +382,6 @@ export default function AdminManageBookings() {
     queryKey: [GET_BOOKINGS_KEY],
   });
 
-  console.log(data?.result);
-
   const dataSource = data?.result.map((item, idx) => ({
     id: idx + 1,
     _id: item._id,
@@ -418,213 +421,224 @@ export default function AdminManageBookings() {
     }
   );
 
+  const columns = [
+    { key: "id", title: "ID", dataIndex: "id", width: "4%" },
+    {
+      key: "thumb",
+      title: "Ảnh",
+      dataIndex: "thumb",
+
+      render: (url) => (
+        <Image
+          className="h-32 aspect-video rounded-md object-cover"
+          src={url}
+        />
+      ),
+    },
+
+    {
+      key: "numberCar",
+      title: "Số ghế",
+      dataIndex: "numberCar",
+      ...getColumnSearchProps("numberCar"),
+    },
+    {
+      key: "fullname",
+      title: "Khách hàng",
+      dataIndex: "fullname",
+      ...getColumnSearchProps("fullname"),
+    },
+
+    {
+      key: "phone",
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      ...getColumnSearchProps("phone"),
+    },
+    {
+      key: "address",
+      title: "Địa chỉ nhận xe",
+      dataIndex: "address",
+      ...getColumnSearchProps("address"),
+    },
+    {
+      key: "totalCost",
+      title: "Tổng giá thuê",
+      dataIndex: "totalCost",
+      ...getColumnSearchProps("totalCost"),
+    },
+    {
+      key: "timeBookingStart",
+      title: "Thời gian bắt đầu",
+      dataIndex: "timeBookingStart",
+    },
+    {
+      key: "timeBookingEnd",
+      title: "Thời gian kết thúc",
+      dataIndex: "timeBookingEnd",
+    },
+    {
+      key: "codeTransaction",
+      title: "Mã giao dịch",
+      dataIndex: "codeTransaction",
+    },
+    {
+      key: "timeTransaction",
+      title: "Thời gian giao dịch",
+      dataIndex: "timeTransaction",
+    },
+
+    {
+      key: "status",
+      title: "Trạng thái",
+      dataIndex: "status",
+      fixed: "right",
+      // width: "%",
+      filters: [
+        {
+          text: "Chưa Có Hợp Đồng",
+          value: "Chưa có hợp đồng",
+        },
+        {
+          text: "Đã Có Hợp Đồng",
+          value: "Đã có hợp đồng",
+        },
+        {
+          text: "Đã Hủy",
+          value: "Đã hủy",
+        },
+      ],
+      // filteredValue: filteredInfo.status || null,
+      onFilter: (value, record) => record.status.includes(value),
+
+      // ellipsis: true,
+      render: (status) => (
+        <>
+          {status === "Chưa có hợp đồng" ? (
+            <>
+              <p className="text-red-500 justify-center">
+                <MinusCircleOutlined
+                  style={{
+                    color: "red",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Chưa Có Hợp Đồng
+              </p>
+            </>
+          ) : status === "Đã có hợp đồng" ? (
+            <>
+              <p className="text-green-600">
+                <CheckCircleOutlined
+                  style={{
+                    color: "green",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Đã Có Hợp Đồng
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-red-500 flex justify-center ">
+                <ExclamationCircleOutlined
+                  style={{
+                    color: "red",
+                    fontSize: "12px",
+                    marginRight: "5px",
+                  }}
+                />
+                Đã Hủy
+              </p>
+            </>
+          )}
+        </>
+      ),
+    },
+    {
+      key: "action",
+      fixed: "right",
+      width: "8%",
+      render: (_, booking) => (
+        <div className="flex gap-2">
+          {booking.status === "Đã có hợp đồng" ||
+          booking.status === "Đã hủy" ? (
+            <Button
+              type="primary"
+              className=" border border-solid  "
+              onClick={() => showModal(booking)}
+              disabled
+            >
+              <PlusCircleOutlined style={{ fontSize: "14px" }} />
+            </Button>
+          ) : (
+            <Tooltip
+              placement="topLeft"
+              title={"Tạo hợp đồng"}
+              color={"rgb(74 222 128)"}
+            >
+              <Button
+                type="primary"
+                className=" border border-solid border-green-400 "
+                onClick={() => showModal(booking)}
+              >
+                <PlusCircleOutlined style={{ fontSize: "14px" }} />
+              </Button>
+            </Tooltip>
+          )}
+
+          <Tooltip
+            placement="top"
+            title={"Tải file để tạo hợp đồng"}
+            color="cyan"
+          >
+            <Button
+              className=" border border-solid border-green-400 bg-cyan-400"
+              onClick={() => generateDocument(booking)}
+            >
+              <DownloadOutlined style={{ fontSize: "14px" }} />
+            </Button>
+          </Tooltip>
+          <Tooltip placement="topRight" title={"Hủy thuê xê"} color={"red"}>
+            <Popconfirm
+              title="Vô hiệu hóa thuê xe?"
+              okText="Vô hiệu hóa"
+              cancelText="Hủy bỏ"
+              onConfirm={() => cancelBook.mutate(booking._id)}
+            >
+              <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
+                <DeleteOutlined style={{ fontSize: "14px" }} />
+              </Button>
+            </Popconfirm>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
+        <Title level={2} className="m-0">
+          <CarOutlined className="mr-2" />
+          Quản lý thuê xe
+        </Title>
+      </div>
+
       <div className="pt-14">
         <Table
-          scroll={{ x: 2400, y: 460 }}
-          columns={[
-            { key: "id", title: "ID", dataIndex: "id", width: "4%" },
-            {
-              key: "thumb",
-              title: "Ảnh",
-              dataIndex: "thumb",
-
-              render: (url) => (
-                <Image
-                  className="h-32 aspect-video rounded-md object-cover"
-                  src={url}
-                />
-              ),
-            },
-
-            {
-              key: "numberCar",
-              title: "Số ghế",
-              dataIndex: "numberCar",
-              ...getColumnSearchProps("numberCar"),
-            },
-            {
-              key: "fullname",
-              title: "Khách hàng",
-              dataIndex: "fullname",
-              ...getColumnSearchProps("fullname"),
-            },
-
-            {
-              key: "phone",
-              title: "Số điện thoại",
-              dataIndex: "phone",
-              ...getColumnSearchProps("phone"),
-            },
-            {
-              key: "address",
-              title: "Địa chỉ nhận xe",
-              dataIndex: "address",
-              ...getColumnSearchProps("address"),
-            },
-            {
-              key: "totalCost",
-              title: "Tổng giá thuê",
-              dataIndex: "totalCost",
-              ...getColumnSearchProps("totalCost"),
-            },
-            {
-              key: "timeBookingStart",
-              title: "Thời gian bắt đầu",
-              dataIndex: "timeBookingStart",
-            },
-            {
-              key: "timeBookingEnd",
-              title: "Thời gian kết thúc",
-              dataIndex: "timeBookingEnd",
-            },
-            {
-              key: "codeTransaction",
-              title: "Mã giao dịch",
-              dataIndex: "codeTransaction",
-            },
-            {
-              key: "timeTransaction",
-              title: "Thời gian giao dịch",
-              dataIndex: "timeTransaction",
-            },
-
-            {
-              key: "status",
-              title: "Trạng thái",
-              dataIndex: "status",
-              fixed: "right",
-              // width: "%",
-              filters: [
-                {
-                  text: "Chưa Có Hợp Đồng",
-                  value: "Chưa có hợp đồng",
-                },
-                {
-                  text: "Đã Có Hợp Đồng",
-                  value: "Đã có hợp đồng",
-                },
-                {
-                  text: "Đã Hủy",
-                  value: "Đã hủy",
-                },
-              ],
-              // filteredValue: filteredInfo.status || null,
-              onFilter: (value, record) => record.status.includes(value),
-
-              // ellipsis: true,
-              render: (status) => (
-                <>
-                  {status === "Chưa có hợp đồng" ? (
-                    <>
-                      <p className="text-red-500 justify-center">
-                        <MinusCircleOutlined
-                          style={{
-                            color: "red",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Chưa Có Hợp Đồng
-                      </p>
-                    </>
-                  ) : status === "Đã có hợp đồng" ? (
-                    <>
-                      <p className="text-green-600">
-                        <CheckCircleOutlined
-                          style={{
-                            color: "green",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Đã Có Hợp Đồng
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-red-500 flex justify-center ">
-                        <ExclamationCircleOutlined
-                          style={{
-                            color: "red",
-                            fontSize: "12px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        Đã Hủy
-                      </p>
-                    </>
-                  )}
-                </>
-              ),
-            },
-            {
-              key: "action",
-              fixed: "right",
-              width: "8%",
-              render: (_, booking) => (
-                <div className="flex gap-2">
-                  {booking.status === "Đã có hợp đồng" ||
-                  booking.status === "Đã hủy" ? (
-                    <Button
-                      type="primary"
-                      className=" border border-solid  "
-                      onClick={() => showModal(booking)}
-                      disabled
-                    >
-                      <PlusCircleOutlined style={{ fontSize: "14px" }} />
-                    </Button>
-                  ) : (
-                    <Tooltip
-                      placement="topLeft"
-                      title={"Tạo hợp đồng"}
-                      color={"rgb(74 222 128)"}
-                    >
-                      <Button
-                        type="primary"
-                        className=" border border-solid border-green-400 "
-                        onClick={() => showModal(booking)}
-                      >
-                        <PlusCircleOutlined style={{ fontSize: "14px" }} />
-                      </Button>
-                    </Tooltip>
-                  )}
-
-                  <Tooltip
-                    placement="top"
-                    title={"Tải file để tạo hợp đồng"}
-                    color="cyan"
-                  >
-                    <Button
-                      className=" border border-solid border-green-400 bg-cyan-400"
-                      onClick={() => generateDocument(booking)}
-                    >
-                      <DownloadOutlined style={{ fontSize: "14px" }} />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip
-                    placement="topRight"
-                    title={"Hủy thuê xê"}
-                    color={"red"}
-                  >
-                    <Popconfirm
-                      title="Vô hiệu hóa thuê xe?"
-                      okText="Vô hiệu hóa"
-                      cancelText="Hủy bỏ"
-                      onConfirm={() => cancelBook.mutate(booking._id)}
-                    >
-                      <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                        <DeleteOutlined style={{ fontSize: "14px" }} />
-                      </Button>
-                    </Popconfirm>
-                  </Tooltip>
-                </div>
-              ),
-            },
-          ]}
+          scroll={{ x: 768, y: 500 }}
+          columns={columns}
           dataSource={dataSource}
           rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `Tổng ${total} xe`,
+          }}
         />
       </div>
       <Modal
@@ -719,7 +733,7 @@ export default function AdminManageBookings() {
           </Button>
         </>
       </Modal>
-    </>
+    </div>
   );
 }
 

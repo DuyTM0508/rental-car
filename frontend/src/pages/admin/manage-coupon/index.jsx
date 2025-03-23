@@ -13,7 +13,13 @@ import {
   updateCoupon,
 } from "@/apis/admin-coupons.api";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CarOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Button,
@@ -24,8 +30,10 @@ import {
   Modal,
   Popconfirm,
   Skeleton,
+  Space,
   Table,
   Tooltip,
+  Typography,
   message,
 } from "antd";
 import dayjs from "dayjs";
@@ -35,6 +43,8 @@ import moment from "moment";
 import { useState } from "react";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+const { Title, Text } = Typography;
+
 function UpsertCouponForm({ couponId, onOk }) {
   const [accessToken] = useLocalStorage("access_token");
   console.log(couponId);
@@ -125,6 +135,7 @@ function UpsertCouponForm({ couponId, onOk }) {
 }
 
 export default function AdminManageCoupon() {
+  const [searchText, setSearchText] = useState("");
   const [accessToken] = useLocalStorage("access_token");
 
   const [upsertCouponModal, setUpsertCouponModal] = useState();
@@ -133,18 +144,24 @@ export default function AdminManageCoupon() {
     queryKey: [GET_COUPONS],
   });
 
-  const dataSource = data?.result.map((item, idx) => ({
-    id: idx + 1,
-    _id: item?._id,
-    name: item?.name,
-    discount: item?.discount,
-    description: item?.description,
-    timeExpired: moment(item?.timeExpired).format("YYYY-MM-DD HH:mm"),
-  }));
+  const dataSource = data?.result
+    .map((item, idx) => ({
+      id: idx + 1,
+      _id: item?._id,
+      name: item?.name,
+      discount: item?.discount,
+      description: item?.description,
+      timeExpired: moment(item?.timeExpired).format("YYYY-MM-DD HH:mm"),
+    }))
+    .filter((item) => {
+      return (
+        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchText.toLowerCase())
+      );
+    });
   const handleInsertCoupon = () => {
     setUpsertCouponModal({ actionType: "insert" });
   };
-  console.log(upsertCouponModal);
 
   // const handleInsertCoupon = () => {
   //   setUpsertCouponModal({ actionType: "insert" });
@@ -163,78 +180,92 @@ export default function AdminManageCoupon() {
     }
   );
 
-  return (
-    <>
-      <div className="pt-10 px-4">
-        <div className="mb-4 flex justify-between items-center">
-          <div>
-            <Button type="primary" onClick={handleInsertCoupon}>
-              <PlusOutlined /> Tạo mã giảm giá
+  const columns = [
+    { key: "id", title: "ID", dataIndex: "id", width: "60px" },
+    {
+      key: "name",
+      title: "Mã giảm giá",
+      dataIndex: "name",
+    },
+    { key: "discount", title: "Mức giảm giá", dataIndex: "discount" },
+    {
+      key: "description",
+      title: "Mô tả chi tiết",
+      dataIndex: "description",
+    },
+    {
+      key: "timeExpired",
+      title: "Ngày hết hạn",
+      dataIndex: "timeExpired",
+    },
+    {
+      key: "action",
+      render: (_, coupon) => (
+        <div className="flex gap-2">
+          <Tooltip placement="top" title={"Chỉnh sửa xe"} color="#108ee9">
+            <Button
+              className="bg-blue-500 text-white border-none hover:bg-blue-500/70"
+              onClick={() => {
+                setUpsertCouponModal({
+                  actionType: "update",
+                  couponId: coupon._id,
+                });
+              }}
+            >
+              <EditOutlined />
             </Button>
-          </div>
+          </Tooltip>
+
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xoá coupon này?"
+            okText="Xóa"
+            cancelText="Hủy"
+            onConfirm={() => deleteCouponMt.mutate(coupon._id)}
+          >
+            <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
         </div>
+      ),
+    },
+  ];
 
-        <Table
-          scroll={{ y: 480 }}
-          pagination={{ pageSize: 10 }}
-          columns={[
-            { key: "id", title: "ID", dataIndex: "id", width: "60px" },
-            {
-              key: "name",
-              title: "Mã giảm giá",
-              dataIndex: "name",
-            },
-            { key: "discount", title: "Mức giảm giá", dataIndex: "discount" },
-            {
-              key: "description",
-              title: "Mô tả chi tiết",
-              dataIndex: "description",
-            },
-            {
-              key: "timeExpired",
-              title: "Ngày hết hạn",
-              dataIndex: "timeExpired",
-            },
-            {
-              key: "action",
-              render: (_, coupon) => (
-                <div className="flex gap-2">
-                  <Tooltip
-                    placement="top"
-                    title={"Chỉnh sửa xe"}
-                    color="#108ee9"
-                  >
-                    <Button
-                      className="bg-blue-500 text-white border-none hover:bg-blue-500/70"
-                      onClick={() => {
-                        setUpsertCouponModal({
-                          actionType: "update",
-                          couponId: coupon._id,
-                        });
-                      }}
-                    >
-                      <EditOutlined />
-                    </Button>
-                  </Tooltip>
-
-                  <Popconfirm
-                    title="Bạn có chắc chắn muốn xoá coupon này?"
-                    okText="Xóa"
-                    cancelText="Hủy"
-                    onConfirm={() => deleteCouponMt.mutate(coupon._id)}
-                  >
-                    <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                      <DeleteOutlined />
-                    </Button>
-                  </Popconfirm>
-                </div>
-              ),
-            },
-          ]}
-          dataSource={dataSource}
-          rowKey="id"
-        />
+  return (
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
+        <Title level={2} className="m-0">
+          <CarOutlined className="mr-2" />
+          Quản lý mã giảm giá
+        </Title>
+        <Space>
+          <Input
+            placeholder="Tìm kiếm mã giảm giá..."
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-64"
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleInsertCoupon}
+          >
+            Thêm mã giảm giá mới
+          </Button>
+        </Space>
       </div>
+      <Table
+        scroll={{ x: 768, y: 500 }}
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `Tổng ${total} mã giảm giá`,
+        }}
+      />
       <Modal
         open={upsertCouponModal}
         title={
@@ -255,7 +286,7 @@ export default function AdminManageCoupon() {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 }
 AdminManageCoupon.Layout = AdminLayout;

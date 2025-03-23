@@ -1,4 +1,3 @@
-
 import { getBrands } from "@/apis/brands.api";
 import { getListCars } from "@/apis/user-cars.api";
 import { CarCard } from "@/components/CarCard";
@@ -109,7 +108,6 @@ export default function ListCarsPage() {
         : null,
   });
 
-  const totalCars = data?.pages?.[0]?.result?.cars?.length || 0;
   const activeFilters = Object.keys(query).filter(
     (key) => key !== "sort" && query[key] !== "all" && query[key] !== undefined
   ).length;
@@ -237,15 +235,6 @@ export default function ListCarsPage() {
 
       {/* Results Summary */}
       <div className="flex justify-between items-center mb-6">
-        <div className="text-gray-600">
-          {isLoading ? (
-            <span>Đang tải...</span>
-          ) : (
-            <span>
-              Tìm thấy <strong>{totalCars}</strong> xe
-            </span>
-          )}
-        </div>
 
         {/* Active Filters */}
         {(costGte || costLte) && (

@@ -23,7 +23,7 @@ import {
   CarOutlined,
   EditOutlined,
   PlusOutlined,
-  SearchOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -435,14 +435,13 @@ export default function AdminManageCars() {
         dataSource={dataSource}
         rowKey="id"
         loading={isLoading}
-        scroll={{ x: 1300 }}
+        scroll={{ x: 768, y: 500 }}
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
           showQuickJumper: true,
           showTotal: (total) => `Tổng ${total} xe`,
         }}
-        className="shadow-sm"
       />
 
       <Modal

@@ -5,9 +5,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-import {
-  SearchOutlined
-} from "@ant-design/icons";
+import { CarOutlined, SearchOutlined } from "@ant-design/icons";
 import { Worker } from "@react-pdf-viewer/core";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -19,7 +17,8 @@ import {
   message,
   Modal,
   Space,
-  Table
+  Table,
+  Typography,
 } from "antd";
 import { useRef, useState } from "react";
 // Import the main component
@@ -32,9 +31,7 @@ import { useRouter } from "next/router";
 import Highlighter from "react-highlight-words";
 
 import { getFinalContracts } from "@/apis/admin-final-contracts.api.js";
-import {
-  GET_FINAL_CONTRACTS_KEY
-} from "@/constants/react-query-key.constant";
+import { GET_FINAL_CONTRACTS_KEY } from "@/constants/react-query-key.constant";
 // Import styles
 import { UploadContract } from "@/components/UploadContract.jsx";
 import { useUserState } from "@/recoils/user.state.js";
@@ -48,6 +45,7 @@ if (typeof window !== "undefined") {
     PizZipUtils = r;
   });
 }
+const { Title, Text } = Typography;
 
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -354,8 +352,6 @@ export default function AdminManageContracts() {
       await getFinalContracts(accessToken, user?.result?.role),
   });
 
-  console.log(data?.result);
-
   const dataSource = data?.result.map((item, idx) => ({
     id: idx + 1,
     _id: item?._id,
@@ -382,104 +378,97 @@ export default function AdminManageContracts() {
     status: item?.status,
   }));
 
+  const columns = [
+    { key: "id", title: "ID", dataIndex: "id", width: "4%" },
+    {
+      key: "image",
+      title: "Ảnh tất toán hợp đồng",
+      dataIndex: "image",
+
+      render: (images) => (
+        <Image.PreviewGroup
+          preview={{
+            onChange: (current, prev) =>
+              console.log(`current index: ${current}, prev index: ${prev}`),
+          }}
+          items={images}
+        >
+          <Image
+            className="h-32 aspect-video rounded-md object-cover"
+            src={images[0]}
+          />
+        </Image.PreviewGroup>
+      ),
+    },
+    // {
+    //   key: "createBy",
+    //   title: "Người Tạo Hợp Đồng",
+    //   dataIndex: "createBy",
+    //   ...getColumnSearchProps("createBy"),
+    // },
+    {
+      key: "bookBy",
+      title: "Tên Khách Hàng",
+      dataIndex: "bookBy",
+      ...getColumnSearchProps("bookBy"),
+    },
+    {
+      key: "email",
+      title: "Email",
+      dataIndex: "email",
+      ...getColumnSearchProps("email"),
+    },
+
+    {
+      key: "phone",
+      title: "Số Điện Thoại",
+      dataIndex: "phone",
+      ...getColumnSearchProps("phone"),
+    },
+    {
+      key: "addres",
+      title: "Điạ Chỉ",
+      dataIndex: "address",
+      ...getColumnSearchProps("address"),
+    },
+    {
+      key: "totalCost",
+      title: "Số tiền kết toán",
+      dataIndex: "totalCost",
+    },
+    {
+      key: "timeBookingStart",
+      title: "Thời Gian Bắt Đầu",
+      dataIndex: "timeBookingStart",
+    },
+    {
+      key: "timeBookingEnd",
+      title: "Thời Gian Kết Thúc",
+      dataIndex: "timeBookingEnd",
+    },
+  ];
+
   return (
-    <>
-      <div className="mt-4 shadow-lg rounded-lg">
-        <Table
-          onChange={handleChange}
-          scroll={{ x: 2400, y: 480 }}
-          columns={[
-            { key: "id", title: "ID", dataIndex: "id", width: "4%" },
-            {
-              key: "image",
-              title: "Ảnh tất toán hợp đồng",
-              dataIndex: "image",
-
-              render: (images) => (
-                <Image.PreviewGroup
-                  preview={{
-                    onChange: (current, prev) =>
-                      console.log(
-                        `current index: ${current}, prev index: ${prev}`
-                      ),
-                  }}
-                  items={images}
-                >
-                  <Image
-                    className="h-32 aspect-video rounded-md object-cover"
-                    src={images[0]}
-                  />
-                </Image.PreviewGroup>
-              ),
-            },
-            // {
-            //   key: "createBy",
-            //   title: "Người Tạo Hợp Đồng",
-            //   dataIndex: "createBy",
-            //   ...getColumnSearchProps("createBy"),
-            // },
-            {
-              key: "bookBy",
-              title: "Tên Khách Hàng",
-              dataIndex: "bookBy",
-              ...getColumnSearchProps("bookBy"),
-            },
-
-            {
-              key: "email",
-              title: "Email",
-              dataIndex: "email",
-              ...getColumnSearchProps("email"),
-            },
-
-            {
-              key: "phone",
-              title: "Số Điện Thoại",
-              dataIndex: "phone",
-              ...getColumnSearchProps("phone"),
-            },
-            {
-              key: "addres",
-              title: "Điạ Chỉ",
-              dataIndex: "address",
-              ...getColumnSearchProps("address"),
-            },
-            {
-              key: "totalCost",
-              title: "Số tiền kết toán",
-              dataIndex: "totalCost",
-            },
-            {
-              key: "timeBookingStart",
-              title: "Thời Gian Bắt Đầu",
-              dataIndex: "timeBookingStart",
-            },
-            {
-              key: "timeBookingEnd",
-              title: "Thời Gian Kết Thúc",
-              dataIndex: "timeBookingEnd",
-            },
-
-            // {
-            //   key: "thumb",
-            //   title: "Thumbnail",
-            //   dataIndex: "thumb",
-            //   render: (url) => (
-            //     <div>
-            //       <Document file={url} onLoadSuccess={onDocumentLoadSuccess}>
-            //         <Page pageNumber={pageNumber} />
-            //       </Document>
-            //       <p>
-            //         Page {pageNumber} of {numPages}
-            //       </p>
-            //     </div>
-            //   ),
-            //  },
-          ]}
-          dataSource={dataSource}
-          rowKey="id"
-        />
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
+        <Title level={2} className="m-0">
+          <CarOutlined className="mr-2" />
+          Quản lý hợp đồng tất toán
+        </Title>
       </div>
+      <Table
+        onChange={handleChange}
+        scroll={{ x: 768, y: 500 }}
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total) => `Tổng ${total} hợp đồng`,
+        }}
+      />
       <Modal
         title="Tất toán hợp đồng"
         open={open}
@@ -582,7 +571,7 @@ export default function AdminManageContracts() {
           </section>
         </div>
       </Modal>
-    </>
+    </div>
   );
 }
 

@@ -142,7 +142,7 @@ export default function AdminManageUsers() {
         dataSource={filteredUsers}
         rowKey="_id"
         loading={isLoading}
-        scroll={{ x: true }}
+        scroll={{ x: 768, y: 500 }}
         pagination={{
           showSizeChanger: true,
           showQuickJumper: true,

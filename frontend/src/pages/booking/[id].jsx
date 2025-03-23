@@ -531,9 +531,9 @@ const BookingPage = () => {
                   <Radio.Group name="bankCode" className="mt-2">
                     <Space direction="vertical">
                       <Radio value="" checked={true}>
-                        Cổng thanh toán VNPAYQR
+                        Cổng thanh toán ZALOPAY
                       </Radio>
-                      <Radio name="bankCode" value="VNPAYQR">
+                      {/* <Radio name="bankCode" value="VNPAYQR">
                         Thanh toán qua ứng dụng hỗ trợ VNPAYQR
                       </Radio>
                       <Radio name="bankCode" value="VNBANK">
@@ -541,19 +541,19 @@ const BookingPage = () => {
                       </Radio>
                       <Radio name="bankCode" value="INTCARD">
                         Thanh toán qua thẻ quốc tế
-                      </Radio>
+                      </Radio> */}
                     </Space>
                   </Radio.Group>
                 </Form.Item>
 
-                <Form.Item name="language" label="Ngôn ngữ:">
+                {/* <Form.Item name="language" label="Ngôn ngữ:">
                   <Radio.Group name="language" className="mt-2">
                     <Space direction="vertical">
                       <Radio value="vn">Tiếng việt</Radio>
                       <Radio value="en">Tiếng anh</Radio>
                     </Space>
                   </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item>
                   <Space direction="horizontal" className="ml-12">

@@ -11,23 +11,27 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   IdcardOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Button,
   Image,
+  Input,
   Popconfirm,
   Space,
   Table,
   Tag,
   Tooltip,
   Typography,
-  message
+  message,
 } from "antd";
+import { useState } from "react";
 
 const { Title } = Typography;
 
 export default function AdminManageGPLX() {
+  const [searchText, setSearchText] = useState("");
   const [accessToken] = useLocalStorage("access_token");
   const {
     data: gplx,
@@ -159,23 +163,37 @@ export default function AdminManageGPLX() {
     },
   ];
 
-  const dataSource = gplx?.result.map((item, idx) => ({
-    key: item?._id,
-    driverId: item?._id,
-    id: idx + 1,
-    img: item?.image,
-    drivingLicenseNo: item?.drivingLicenseNo,
-    class: item?.class,
-    status: item?.status,
-  }));
+  const dataSource = gplx?.result
+    .map((item, idx) => ({
+      key: item?._id,
+      driverId: item?._id,
+      id: idx + 1,
+      img: item?.image,
+      drivingLicenseNo: item?.drivingLicenseNo,
+      class: item?.class,
+      status: item?.status,
+    }))
+    .filter(
+      (item) =>
+        item.class.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.status.toLowerCase().includes(searchText.toLowerCase())
+    );
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="mb-6 flex justify-between items-center">
         <Title level={2} className="mb-6">
           <IdcardOutlined className="mr-2" />
           Quản lý bằng lái xe
         </Title>
+        <Space>
+          <Input
+            placeholder="Tìm kiếm bằng lái xe..."
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-64"
+          />
+        </Space>
       </div>
 
       <Table
@@ -189,7 +207,7 @@ export default function AdminManageGPLX() {
           showQuickJumper: true,
           showTotal: (total) => `Tổng ${total} bằng lái xe`,
         }}
-        scroll={{ x: 1000, y: 500 }}
+        scroll={{ x: 768, y: 500 }}
       />
     </div>
   );

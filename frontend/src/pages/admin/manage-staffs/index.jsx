@@ -10,7 +10,16 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { UserAddOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Avatar, Button, Form, Input, message, Modal, Popconfirm, Table } from "antd";
+import {
+  Avatar,
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Table,
+} from "antd";
 import { useState } from "react";
 
 function UpsertStaffForm({ actionType, staffId, onClose }) {
@@ -248,6 +257,86 @@ export default function AdminManageStaffs() {
     setUpsertStaffModal({ actionType: "insert", staffId: undefined });
   };
 
+  const columns = [
+    {
+      key: "id",
+      title: "ID",
+      dataIndex: "id",
+      render: (_value, _record, idx) => idx + 1,
+    },
+    {
+      key: "profilePicture",
+      title: "Avatar",
+      dataIndex: "profilePicture",
+      render: (url) => <Avatar src={url} />,
+    },
+    // { key: "username", title: "Username", dataIndex: "username" },
+    { key: "name", title: "Họ tên", dataIndex: "fullname" },
+    { key: "email", title: "Email", dataIndex: "email" },
+    {
+      key: "phoneNumber",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+    },
+    // { key: "role", title: "Role", dataIndex: "role" },
+    { key: "address", title: "Địa chỉ", dataIndex: "address" },
+    {
+      key: "action",
+      render: (_, staff) => (
+        <div className="flex gap-2">
+          <Button
+            className="bg-blue-500 text-white border-none hover:bg-blue-500/70"
+            onClick={() =>
+              setUpsertStaffModal({
+                actionType: "update",
+                staffId: staff._id,
+              })
+            }
+          >
+            Cập nhật
+          </Button>
+          {staff?.status === "Hoạt động" && (
+            <Popconfirm
+              title="Bạn muốn chặn nhân viên này?"
+              okText="Chặn"
+              cancelText="Hủy"
+              onConfirm={() => {
+                apiUpdateStatus.mutateAsync({
+                  accessToken,
+                  userId: staff._id,
+                  status: "Không hoạt động",
+                });
+              }}
+            >
+              <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
+                Chặn
+              </Button>
+            </Popconfirm>
+          )}
+
+          {staff?.status === "Không hoạt động" && (
+            <Popconfirm
+              title="Bạn muốn bỏ chặn nhân viên này?"
+              okText="Bỏ chặn"
+              cancelText="Hủy"
+              onConfirm={() => {
+                apiUpdateStatus.mutateAsync({
+                  accessToken,
+                  userId: staff._id,
+                  status: "Hoạt động",
+                });
+              }}
+            >
+              <Button className="bg-green-500 text-white border-none hover:bg-green-500/70">
+                Bỏ chặn
+              </Button>
+            </Popconfirm>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="pt-10">
@@ -260,87 +349,16 @@ export default function AdminManageStaffs() {
         </div>
         <Table
           loading={isLoading}
-          columns={[
-            {
-              key: "id",
-              title: "ID",
-              dataIndex: "id",
-              render: (_value, _record, idx) => idx + 1,
-            },
-            {
-              key: "profilePicture",
-              title: "Avatar",
-              dataIndex: "profilePicture",
-              render: (url) => <Avatar src={url} />,
-            },
-            // { key: "username", title: "Username", dataIndex: "username" },
-            { key: "name", title: "Họ tên", dataIndex: "fullname" },
-            { key: "email", title: "Email", dataIndex: "email" },
-            {
-              key: "phoneNumber",
-              title: "Số điện thoại",
-              dataIndex: "phoneNumber",
-            },
-            // { key: "role", title: "Role", dataIndex: "role" },
-            { key: "address", title: "Địa chỉ", dataIndex: "address" },
-            {
-              key: "action",
-              render: (_, staff) => (
-                <div className="flex gap-2">
-                  <Button
-                    className="bg-blue-500 text-white border-none hover:bg-blue-500/70"
-                    onClick={() =>
-                      setUpsertStaffModal({
-                        actionType: "update",
-                        staffId: staff._id,
-                      })
-                    }
-                  >
-                    Cập nhật
-                  </Button>
-                  {staff?.status === "Hoạt động" && (
-                    <Popconfirm
-                      title="Bạn muốn chặn nhân viên này?"
-                      okText="Chặn"
-                      cancelText="Hủy"
-                      onConfirm={() => {
-                        apiUpdateStatus.mutateAsync({
-                          accessToken,
-                          userId: staff._id,
-                          status: "Không hoạt động",
-                        });
-                      }}
-                    >
-                      <Button className="bg-red-500 text-white border-none hover:bg-red-500/70">
-                        Chặn
-                      </Button>
-                    </Popconfirm>
-                  )}
-
-                  {staff?.status === "Không hoạt động" && (
-                    <Popconfirm
-                      title="Bạn muốn bỏ chặn nhân viên này?"
-                      okText="Bỏ chặn"
-                      cancelText="Hủy"
-                      onConfirm={() => {
-                        apiUpdateStatus.mutateAsync({
-                          accessToken,
-                          userId: staff._id,
-                          status: "Hoạt động",
-                        });
-                      }}
-                    >
-                      <Button className="bg-green-500 text-white border-none hover:bg-green-500/70">
-                        Bỏ chặn
-                      </Button>
-                    </Popconfirm>
-                  )}
-                </div>
-              ),
-            },
-          ]}
+          columns={columns}
           dataSource={data?.result}
           rowKey="id"
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `Tổng ${total} nhân viên`,
+          }}
+          scroll={{ x: 768, y: 500 }}
         />
       </div>
 
