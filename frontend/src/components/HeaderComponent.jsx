@@ -4,7 +4,7 @@ import { UserFilledIcon } from "@/icons";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../public/logo.png";
+import logo from "../../public/logo2.png";
 import { Avatar, Layout, Menu, Space, Button, Dropdown } from "antd";
 import { useUserState } from "@/recoils/user.state.js";
 import { useDriverState } from "@/recoils/driver.state";
@@ -45,6 +45,39 @@ const StyledMenu = styled(Menu)`
         border-bottom: 2px solid #22c55e;
       }
     }
+  }
+`;
+
+const LogoContainer = styled.div`
+  position: relative;
+  height: 40px;
+  width: 50px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 6px rgba(34, 197, 94, 0.1));
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(34, 197, 94, 0.6),
+      transparent
+    );
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
   }
 `;
 
@@ -106,7 +139,7 @@ export default function HeaderComponent() {
     {
       key: "/about-us",
       icon: <InfoCircleOutlined />,
-      label: <Link href={"/about-us"}>Về CRT</Link>,
+      label: <Link href={"/about-us"}>Về FRT</Link>,
     },
     {
       key: "/cars",
@@ -131,15 +164,19 @@ export default function HeaderComponent() {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <div className="relative h-10 w-24 transition-transform hover:scale-105">
+            <LogoContainer>
               <Image
                 src={logo || "/placeholder.svg"}
-                alt="CRT Logo"
+                alt="FRT Logo"
                 fill
                 className="object-contain"
                 priority
+                style={{
+                  filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08))",
+                  borderRadius: "3px",
+                }}
               />
-            </div>
+            </LogoContainer>
           </Link>
         </div>
 

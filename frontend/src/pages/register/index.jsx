@@ -3,9 +3,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, Typography } from "antd";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import logo from "../../../public/logo.png";
+import logo from "../../../public/logo2.png";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { AuthLayout } from "@/layouts/AuthLayout";
@@ -32,11 +33,30 @@ const ButtonSummit = styled(Button)`
   padding: 30px auto;
 `;
 
-const RegisterPage = () => {
-  const loaderProp = ({ src }) => {
-    return src;
-  };
+const LogoContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
 
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    width: 40%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(34, 197, 94, 0.5),
+      transparent
+    );
+    border-radius: 2px;
+  }
+`;
+
+const RegisterPage = () => {
   const validatePhoneNumber = (_, value) => {
     // Simple regex pattern for a basic phone number validation
     const phoneNumberRegex = /^(?:\d{10}|\d{11})$/;
@@ -131,16 +151,31 @@ const RegisterPage = () => {
   const { mutate } = useMutation(onSubmit);
   return (
     <div className="py-[30px] px-[20px] h-screen">
-      <div className="flex flex-col justify-center items-center h-full ">
-        <Image
-          src={logo}
-          alt="logo"
-          width={150}
-          height={90}
-          loader={loaderProp}
-        />
+      <div className="flex flex-col justify-center items-center h-full">
+        <LogoContainer>
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-white rounded-full opacity-0 group-hover:opacity-100 group-hover:shadow-md transition-all duration-300"></div>
+            <div className="relative">
+              <Image
+                src={logo || "/placeholder.svg"}
+                alt="FRT Logo"
+                width={150}
+                height={90}
+                priority
+                className="transition-all duration-300 group-hover:scale-105 rounded-xl"
+                style={{
+                  filter: "drop-shadow(0 2px 4px rgba(34, 197, 94, 0.15))",
+                }}
+              />
+            </div>
+            <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></div>
+          </div>
+          <div className="text-green-500 font-medium text-sm mt-2 opacity-80">
+            Đăng ký tài khoản mới
+          </div>
+        </LogoContainer>
+
         <Title>Đăng ký thông tin</Title>
-        {/* <Title level={5}>Đăng ký thông tin</Title> */}
 
         <div>
           <Form
@@ -154,30 +189,7 @@ const RegisterPage = () => {
               maxWidth: 600,
             }}
             autoComplete="off"
-            // className="mt-5"
           >
-            {/* <Form.Item
-              name="username"
-              rules={[
-                {
-                  required: true,
-                  message: "Hãy nhập tên hiẻn thị!",
-                  whitespace: true,
-                },
-                {
-                    min: 6,
-                    max: 40,
-                    message: "Độ dài tên hiển thị từ 6 đến 40 ký tự!",
-                  },
-              ]}
-            >
-              <StyleInput
-                placeholder="Username"
-                size="medium"
-                // style={{ border: "2px solid red" }}
-              />
-            </Form.Item> */}
-
             <Form.Item
               name="email"
               rules={[
@@ -197,21 +209,13 @@ const RegisterPage = () => {
               name="fullname"
               rules={[{ validator: validateFullname }]}
             >
-              <StyleInput
-                placeholder="Họ và tên"
-                size="medium"
-                // style={{ border: "2px solid red" }}
-              />
+              <StyleInput placeholder="Họ và tên" size="medium" />
             </Form.Item>
             <Form.Item
               name="phoneNumber"
               rules={[{ validator: validatePhoneNumber }]}
             >
-              <StyleInput
-                placeholder="Số Điện Thoại"
-                size="medium"
-                // style={{ border: "2px solid red" }}
-              />
+              <StyleInput placeholder="Số Điện Thoại" size="medium" />
             </Form.Item>
             <Form.Item
               name="address"
@@ -223,11 +227,7 @@ const RegisterPage = () => {
                 },
               ]}
             >
-              <StyleInput
-                placeholder="Địa chỉ"
-                size="medium"
-                // style={{ border: "2px solid red" }}
-              />
+              <StyleInput placeholder="Địa chỉ" size="medium" />
             </Form.Item>
             <Form.Item
               name="password"
@@ -267,26 +267,23 @@ const RegisterPage = () => {
               />
             </Form.Item>
 
-            <Form.Item
-            //   wrapperCol={{
-            //     offset: 8,
-            //     span: 16,
-            //   }}
-            >
+            <Form.Item>
               <ButtonSummit type="primary" htmlType="submit">
                 Đăng ký
               </ButtonSummit>
             </Form.Item>
           </Form>
-          <div className=" 2xl:hidden xl:hidden lg:hidden md:hidden  justify-end  ">
-            <Title level={5}>
+          <div className="flex justify-center mt-4">
+            <Title level={5} className="m-0">
               Bạn đã có tài khoản?{" "}
-              <Button
-                type="text"
-                className="font-bold text-base text-green-500"
-              >
-                Đăng Nhập
-              </Button>
+              <Link href="/login">
+                <Button
+                  type="text"
+                  className="font-bold text-base text-green-500 p-0"
+                >
+                  Đăng Nhập
+                </Button>
+              </Link>
             </Title>
           </div>
         </div>

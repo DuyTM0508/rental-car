@@ -38,7 +38,7 @@ export const AuthLayout = ({ children }) => {
           <div className="absolute inset-3 flex flex-col justify-between px-12 py-20 text-white">
             <div>
               <Title level={1} className="text-white text-5xl font-bold mb-6">
-                CRT
+                FRT
               </Title>
               <Title level={2} className="text-white font-normal">
                 Hành trình theo cách của bạn

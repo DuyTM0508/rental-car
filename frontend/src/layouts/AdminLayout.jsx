@@ -8,13 +8,13 @@ import {
   IdcardOutlined,
   LogoutOutlined,
   UsergroupAddOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Dropdown, Layout, Menu } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import logo from "../../public/logo.png";
+import logo from "../../public/logo2.png";
 
 const { Sider, Header, Content } = Layout;
 
@@ -56,17 +56,28 @@ export const AdminLayout = ({ children }) => {
   return (
     <Layout hasSider className="h-screen">
       <Sider theme="light" className="border-r shadow bg-white p-6" width={310}>
-        <div className="w-full  h-32 flex justify-center items-center mb-10">
+        <div className="w-full h-32 flex justify-center items-center mb-10 relative">
           <Link href={`/admin/dashboard`}>
-            <Image
-              src={logo}
-              alt="logo"
-              width={170}
-              height={100}
-              // loader={loaderProp}
-              unoptimized={true}
-              className="cursor-pointer"
-            />
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-4 bg-gradient-to-r from-green-50 via-white to-green-50 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+              <div className="relative">
+                <Image
+                  src={logo || "/placeholder.svg"}
+                  alt="FRT Admin Logo"
+                  width={170}
+                  height={100}
+                  unoptimized={true}
+                  className="transition-all duration-300 group-hover:scale-105 rounded-xl"
+                  style={{
+                    filter: "drop-shadow(0 2px 4px rgba(34, 197, 94, 0.15))",
+                  }}
+                />
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-green-500 font-bold text-sm bg-white px-3 py-0.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">
+                  Admin Dashboard
+                </div>
+              </div>
+              <div className="h-0.5 w-0 bg-gradient-to-r from-green-300 to-green-500 absolute -bottom-2 left-0 group-hover:w-full transition-all duration-500 ease-out"></div>
+            </div>
           </Link>
         </div>
         <Menu

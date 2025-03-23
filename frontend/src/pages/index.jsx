@@ -222,7 +222,7 @@ export default function HomePage() {
             Chương Trình Khuyến Mãi
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Nhận nhiều ưu đãi hấp dẫn từ CRT khi đặt xe ngay hôm nay
+            Nhận nhiều ưu đãi hấp dẫn từ FRT khi đặt xe ngay hôm nay
           </p>
         </div>
         <div className="relative mt-10">
@@ -351,7 +351,7 @@ export default function HomePage() {
             </h3>
 
             <p className="text-gray-600 leading-relaxed">
-              CRT đặt mục tiêu trở thành cộng động người dùng ô tô Văn minh & Uy
+              FRT đặt mục tiêu trở thành cộng động người dùng ô tô Văn minh & Uy
               tín #1 tại Hà Nội, nhằm mang lại những giá trị thiết thực cho tất
               cả những thành viên hướng đến một cuộc sống tốt đẹp hơn.
             </p>
@@ -391,8 +391,8 @@ export default function HomePage() {
                   Thuê xe an toàn
                 </h4>
                 <p className="text-gray-600 text-sm">
-                  Tất cả các xe trên CRT đã được kiểm duyệt và chịu sự quản lý
-                  của CRT
+                  Tất cả các xe trên FRT đã được kiểm duyệt và chịu sự quản lý
+                  của FRT
                 </p>
               </div>
             </div>
@@ -460,7 +460,7 @@ export default function HomePage() {
                 Bắt đầu trải nghiệm cùng chúng tôi
               </h3>
               <p className="text-gray-600 mb-10">
-                Chỉ với 4 bước đơn giản để trải nghiệm thuê xe CRT một cách
+                Chỉ với 4 bước đơn giản để trải nghiệm thuê xe FRT một cách
                 nhanh chóng
               </p>
 
@@ -471,7 +471,7 @@ export default function HomePage() {
                   </div>
                   <div className="pt-2">
                     <h4 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">
-                      Đặt xe trên app/web CRT
+                      Đặt xe trên app/web FRT
                     </h4>
                     <p className="text-gray-500">
                       Chọn xe phù hợp với nhu cầu của bạn
@@ -581,8 +581,8 @@ export default function HomePage() {
               Bạn muốn biết thêm thông tin về chúng tôi?
             </h3>
             <p className="text-gray-600 mb-8 max-w-md">
-              CRT mang lại một ứng dụng cho thuê xe tự lái ở Hà Nội và sẽ mở
-              rộng ra hơn khắp Việt Nam trong thời gian tới. CRT mong rằng sẽ
+              FRT mang lại một ứng dụng cho thuê xe tự lái ở Hà Nội và sẽ mở
+              rộng ra hơn khắp Việt Nam trong thời gian tới. FRT mong rằng sẽ
               đem lại trải nghiệp thuê xe tự lái một cách an toàn và chuyên
               nghiệp nhất
             </p>
@@ -605,7 +605,7 @@ export default function HomePage() {
           </h3>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
             Nhận thông tin về các chương trình khuyến mãi và ưu đãi đặc biệt từ
-            CRT
+            FRT
           </p>
           <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
             <input

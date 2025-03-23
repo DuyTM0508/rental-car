@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import logo from "../../../public/logo.png";
+import logo from "../../../public/logo2.png";
 
 const { Title, Text } = Typography;
 
@@ -37,6 +37,29 @@ const StyledButton = styled(Button)`
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
+`;
+
+const LogoContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    width: 40%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(34, 197, 94, 0.5),
+      transparent
+    );
+    border-radius: 2px;
+  }
 `;
 
 const LoginPage = () => {
@@ -98,16 +121,30 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-md  p-8 rounded-lg">
+      <div className="w-full max-w-md p-8 rounded-lg bg-white shadow-sm">
         <div className="flex flex-col items-center mb-8">
-          <Image
-            src={logo || "/placeholder.svg"}
-            alt="logo"
-            width={120}
-            height={72}
-            priority
-            className="mb-4"
-          />
+          <LogoContainer>
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-white rounded-full opacity-0 group-hover:opacity-100 group-hover:shadow-md transition-all duration-300"></div>
+              <div className="relative">
+                <Image
+                  src={logo || "/placeholder.svg"}
+                  alt="FRT Logo"
+                  width={140}
+                  height={84}
+                  priority
+                  className="transition-all duration-300 group-hover:scale-105 rounded-xl"
+                  style={{
+                    filter: "drop-shadow(0 2px 4px rgba(34, 197, 94, 0.15))",
+                  }}
+                />
+              </div>
+              <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out"></div>
+            </div>
+            <div className="text-green-500 font-medium text-sm mt-2 opacity-80">
+              Thuê xe an toàn & tiện lợi
+            </div>
+          </LogoContainer>
           <Title level={2} className="text-center m-0">
             Đăng nhập
           </Title>
