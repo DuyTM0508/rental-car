@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST={"admin/manage-contracts/index.jsx -> pizzip/utils/index.js":{"id":"admin/manage-contracts/index.jsx -> pizzip/utils/index.js","files":["static/chunks/node_modules_pizzip_utils_index_js.js"]}}
