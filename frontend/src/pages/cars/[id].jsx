@@ -592,7 +592,7 @@ export default function CarDetailPage() {
 
               <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <InfoIcon className="text-gray-400" />
-                <span>Bạn chỉ phải thanh toán khi đặt xe được xác nhận</span>
+                <span>Xem trước thời gian mà bạn muốn thuê</span>
               </div>
             </div>
           </div>

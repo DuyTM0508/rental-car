@@ -128,8 +128,9 @@ export default function AdminManageBookings() {
   };
 
   const generateDocument = (booking) => {
+    console.log("booking", booking);
     loadFile(
-      "https://firebasestorage.googleapis.com/v0/b/rental-945b7.appspot.com/o/pdfs%2Fhop_dong_thue_xe.docx?alt=media&token=53c0180b-1e6e-42b4-a8ad-88e9d181eae3",
+      "https://firebasestorage.googleapis.com/v0/b/my-project-fc361.appspot.com/o/hop_dong.docx?alt=media&token=3e9e0bd6-74d8-4ced-8d29-3412e97f264c",
       function (error, content) {
         if (error) {
           throw error;

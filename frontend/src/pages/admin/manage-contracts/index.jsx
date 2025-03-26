@@ -238,8 +238,9 @@ export default function AdminManageContracts() {
   });
 
   const generateDocument = (contract) => {
+    console.log(contract, "contract");
     loadFile(
-      "https://firebasestorage.googleapis.com/v0/b/rental-945b7.appspot.com/o/pdfs%2Ftat_toan_hop_dong_thue_xe.docx?alt=media&token=f2e3ec7c-bd2d-457a-95ec-90aaed59e5a3",
+      "https://firebasestorage.googleapis.com/v0/b/my-project-fc361.appspot.com/o/Tat_toan_hop_dong.docx?alt=media&token=65cff6a6-25a2-4c17-97bc-bab89e9c8140",
       function (error, content) {
         if (error) {
           throw error;
@@ -250,10 +251,11 @@ export default function AdminManageContracts() {
           address: contract.address,
           fullName: contract?.bookBy,
           phone: contract.phone,
-          id: contract.bookingId,
+          bookingId: contract.bookingId,
           phoneNumber: user?.result.phoneNumber,
           nameStaff: user?.result.fullname,
           role: user?.result.role === "staff" ? "Nhân viên" : "Quản lý",
+          id: contract._id,
 
           model: contract.model,
           yearManufacture: contract.yearManufacture,
