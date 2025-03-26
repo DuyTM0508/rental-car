@@ -4,7 +4,7 @@ import { useDriverState } from "@/recoils/driver.state.js";
 import { useUserState } from "@/recoils/user.state.js";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { UploadImage } from "@/components/UploadImage";
+import { UploadImageDrive } from "@/components/ UploadImageDrive";
 import axios from "axios";
 import { Button, Form, notification, Modal, InputNumber, Select } from "antd";
 
@@ -160,7 +160,7 @@ export default function RegisterDriverModal({
 
         <div className="grow w-1/3">
           <Form.Item label="Hình ảnh" name="image" required>
-            <UploadImage />
+            <UploadImageDrive />
           </Form.Item>
         </div>
       </Form>
