@@ -22,6 +22,7 @@ import {
   Space,
   DatePicker,
   message,
+  Checkbox,
 } from "antd";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -53,7 +54,6 @@ const BookingPage = () => {
   const [to, setTo] = useState(
     moment(dates?.[1]?.format("YYYY-MM-DD HH:mm") || undefined)._i
   );
-  console.log(from, to);
   const onChange = (e) => {
     setCostGetCar(e.target.value);
   };
@@ -158,11 +158,8 @@ const BookingPage = () => {
         );
       }
 
-      console.log("Booking response:", response2);
-
       // Gửi yêu cầu thanh toán
       const requestData = { ...values, from, to, id: data?._id };
-      console.log("From" + from + "To : " + to); // Kiểm tra dữ liệu trước khi gửi
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/payments/zalopay_payment_url`,
@@ -178,7 +175,6 @@ const BookingPage = () => {
         message.error("Không tìm thấy đường dẫn thanh toán.");
       }
     } catch (error) {
-      console.error("Error:", error);
       message.error(error.response?.data?.message || "Đã xảy ra lỗi.");
     }
   };
@@ -526,38 +522,31 @@ const BookingPage = () => {
                 </Form.Item>
               </div>
               <div class="mt-14 bg-gray-50 px-10 pt-8 lg:mt-5 rounded-md shadow-md">
-                <Form.Item name="bankCode" label="Thanh toán:">
-                  <Radio.Group name="bankCode" className="mt-2">
-                    <Space direction="vertical">
-                      <Radio value="" checked={true}>
-                        Cổng thanh toán ZALOPAY
-                      </Radio>
-                      {/* <Radio name="bankCode" value="VNPAYQR">
-                        Thanh toán qua ứng dụng hỗ trợ VNPAYQR
-                      </Radio>
-                      <Radio name="bankCode" value="VNBANK">
-                        Thanh toán qua ATM-Tài khoản ngân hàng nội địa
-                      </Radio>
-                      <Radio name="bankCode" value="INTCARD">
-                        Thanh toán qua thẻ quốc tế
-                      </Radio> */}
-                    </Space>
-                  </Radio.Group>
+                <Form.Item
+                  name="agreeTerms"
+                  valuePropName="checked"
+                  rules={[
+                    {
+                      validator: (_, value) =>
+                        value
+                          ? Promise.resolve()
+                          : Promise.reject(
+                              new Error(
+                                "Bạn phải đồng ý với điều khoản của chúng tôi"
+                              )
+                            ),
+                    },
+                  ]}
+                >
+                  <Checkbox>Đồng ý với mọi điều khoản của chúng tôi</Checkbox>
                 </Form.Item>
-
-                {/* <Form.Item name="language" label="Ngôn ngữ:">
-                  <Radio.Group name="language" className="mt-2">
-                    <Space direction="vertical">
-                      <Radio value="vn">Tiếng việt</Radio>
-                      <Radio value="en">Tiếng anh</Radio>
-                    </Space>
-                  </Radio.Group>
-                </Form.Item> */}
-
                 <Form.Item>
-                  <Space direction="horizontal" className="ml-12">
+                  <Space
+                    direction="horizontal"
+                    className="ml-12 flex justify-center "
+                  >
                     <Button type="primary" htmlType="submit">
-                      Thanh Toán
+                      Thanh Toán qua ZALOPAY
                     </Button>
                     <Button type="dashed" onClick={handleBack}>
                       Trở về thủ tục thanh toán

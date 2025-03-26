@@ -177,7 +177,7 @@ export default function BookingDetailPage() {
               },
               {
                 label: "Phương thức thanh toán",
-                price: "VNPay",
+                price: "ZaloPay",
               },
             ]}
           />
