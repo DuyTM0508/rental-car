@@ -27,12 +27,14 @@ import {
   message,
 } from "antd";
 import { useState } from "react";
+import axios from "axios"; // Đảm bảo axios đã import
 
 const { Title } = Typography;
 
 export default function AdminManageGPLX() {
   const [searchText, setSearchText] = useState("");
   const [accessToken] = useLocalStorage("access_token");
+
   const {
     data: gplx,
     refetch,
@@ -43,7 +45,45 @@ export default function AdminManageGPLX() {
   });
 
   const deleteGPLX = useMutation(
-    (driverId) => deleteDriverLicense(driverId, accessToken),
+    async (driverId) => {
+      try {
+        // Lấy thông tin user từ driverId
+        const response1 = await axios.post(
+          `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/get-user-by-driverid`,
+          { driverId }
+        );
+
+        if (!response1.data.result) {
+          throw new Error("Không tìm thấy người dùng");
+        }
+
+        const { email, fullname } = response1.data.result;
+
+        // Gửi email xác nhận
+        const mailResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/register-mail`,
+          {
+            email,
+            name: fullname,
+            text: "Your driver lisence in FRC is exprired please update",
+            subject: "Driver License is expried",
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
+
+        if (mailResponse.status !== 200) {
+          throw new Error("Gửi email thất bại");
+        }
+
+        // Nếu gửi mail thành công, cập nhật trạng thái GPLX
+        return deleteDriverLicense(driverId, accessToken);
+      } catch (error) {
+        throw new Error(error.message || "Có lỗi xảy ra khi duyệt bằng lái xe");
+      }
+    },
     {
       onSuccess: () => {
         message.success("Xóa bằng lái xe thành công");
@@ -56,7 +96,45 @@ export default function AdminManageGPLX() {
   );
 
   const acceptGPLX = useMutation(
-    (driverId) => acceptLicensesDriver(accessToken, driverId),
+    async (driverId) => {
+      try {
+        // Lấy thông tin user từ driverId
+        const response1 = await axios.post(
+          `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/get-user-by-driverid`,
+          { driverId }
+        );
+
+        if (!response1.data.result) {
+          throw new Error("Không tìm thấy người dùng");
+        }
+
+        const { email, fullname } = response1.data.result;
+
+        // Gửi email xác nhận
+        const mailResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/users/register-mail`,
+          {
+            email,
+            name: fullname,
+            text: "Congratulations, your driver license is approved",
+            subject: "Approve License",
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
+
+        if (mailResponse.status !== 200) {
+          throw new Error("Gửi email thất bại");
+        }
+
+        // Nếu gửi mail thành công, cập nhật trạng thái GPLX
+        return acceptLicensesDriver(accessToken, driverId);
+      } catch (error) {
+        throw new Error(error.message || "Có lỗi xảy ra khi duyệt bằng lái xe");
+      }
+    },
     {
       onSuccess: () => {
         message.success("Duyệt bằng lái xe thành công");
