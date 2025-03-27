@@ -4,7 +4,7 @@ import { useDriverState } from "@/recoils/driver.state.js";
 import { useUserState } from "@/recoils/user.state.js";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { UploadImageDrive } from "@/components/ UploadImageDrive";
+import { UploadImageDrive } from "@/components/UploadImageDrive";
 import axios from "axios";
 import { Button, Form, notification, Modal, InputNumber, Select } from "antd";
 
