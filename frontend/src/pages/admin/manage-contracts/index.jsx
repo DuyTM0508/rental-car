@@ -76,6 +76,8 @@ export default function AdminManageContracts() {
   const searchInput = useRef(null);
   const router = useRouter();
   const [days, setDays] = useState();
+  const [lateDays, setLateDays] = useState(0);
+  const [returnType, setReturnType] = useState(null); // 'early' or 'late' or null
   const [filteredInfo, setFilteredInfo] = useState({});
   const handleChange = (pagination, filters) => {
     setFilteredInfo(filters);
@@ -112,6 +114,12 @@ export default function AdminManageContracts() {
   }, [days]);
 
   const handleDays = (value) => {
+    if (!value) {
+      setReturnType(null);
+      return;
+    }
+    
+    setReturnType('early');
     console.log(value);
     const startDate = new Date(moment(value?.format("YYYY-MM-DD"))?._i);
 
@@ -129,6 +137,64 @@ export default function AdminManageContracts() {
     // );
     const totalDays = dateDiffInDays(endDate, startDate);
     setDays(totalDays);
+    
+    // Clear late return fields
+    form.setFieldsValue({
+      lateTimeFinish: null,
+      lateDays: null,
+      latePenalty: null,
+      late_cost_settlement: null
+    });
+  };
+
+  const handleLateDays = (value) => {
+    if (!value) {
+      setReturnType(null);
+      return;
+    }
+    
+    setReturnType('late');
+    const returnDate = new Date(moment(value?.format("YYYY-MM-DD"))?._i);
+
+    const arrayDayEnd = form
+      .getFieldValue("timeBookingEnd")
+      .split(" ")[0]
+      .split("-");
+    const endDate = new Date(
+      `${arrayDayEnd[1]}-${arrayDayEnd[0]}-${arrayDayEnd[2]}`
+    );
+
+    // Only calculate if return date is after end date
+    if (returnDate > endDate) {
+      const totalLateDays = dateDiffInDays(returnDate, endDate);
+      setLateDays(totalLateDays);
+
+      // Calculate penalty (10% of daily rate per late day)
+      const dailyRate = form.getFieldValue("cost");
+      const penaltyAmount = dailyRate * 0.1 * totalLateDays;
+
+      // Update settlement cost with penalty
+      const newAmount = form.getFieldValue("totalCostNumber") + penaltyAmount;
+
+      form.setFieldsValue({
+        late_cost_settlement: newAmount,
+        latePenalty: penaltyAmount,
+        lateDays: totalLateDays,
+      });
+    } else {
+      setLateDays(0);
+      form.setFieldsValue({
+        late_cost_settlement: form.getFieldValue("totalCostNumber"),
+        latePenalty: 0,
+        lateDays: 0,
+      });
+    }
+    
+    // Clear early return fields
+    form.setFieldsValue({
+      timeFinish: null,
+      cost_settlement: null
+    });
   };
   const handleReset = (clearFilters) => {
     clearFilters();
@@ -316,20 +382,26 @@ export default function AdminManageContracts() {
     );
   };
 
+  // Update the onSubmit function to include the late penalty information
   const onSubmit = async (values) => {
     try {
-      // setTimeout(() => {
-      //   setOpen(false);
-      // }, 500);
-
+      const finalTimeFinish = values?.timeFinish 
+        ? moment(values?.timeFinish?.format("YYYY-MM-DD"))._i 
+        : values?.lateTimeFinish 
+          ? moment(values?.lateTimeFinish?.format("YYYY-MM-DD"))._i 
+          : undefined;
+          
+      const finalCostSettlement = values?.cost_settlement || values?.late_cost_settlement || values?.totalCostNumber;
+      
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_REACT_APP_BACKEND_URL}/final-contracts/create/${values._id}`,
         {
           images: values?.images || undefined,
-          timeFinish:
-            moment(values?.timeFinish?.format("YYYY-MM-DD"))._i || undefined,
-          cost_settlement: values?.cost_settlement || values?.totalCostNumber,
+          timeFinish: finalTimeFinish,
+          cost_settlement: finalCostSettlement,
           note: values?.note || undefined,
+          lateDays: values?.lateDays || 0,
+          latePenalty: values?.latePenalty || 0,
         },
         {
           headers: {
@@ -339,7 +411,6 @@ export default function AdminManageContracts() {
           withCredentials: true,
         }
       );
-      console.log(response);
 
       if (response.status === 201) {
         message.success("Create final contract successfully");
@@ -390,6 +461,7 @@ export default function AdminManageContracts() {
 
   const showModal = (booking) => {
     setOpen(true);
+    setReturnType(null); // Reset return type when opening modal
 
     form.setFieldsValue({
       // timeFinish: moment(new Date()),
@@ -408,7 +480,7 @@ export default function AdminManageContracts() {
     setOpen(false);
   };
 
-  const disabledDate = (current) => {
+  const disabledDateEarly = (current) => {
     const arrayDayEnd = form
       .getFieldValue("timeBookingEnd")
       .split(" ")[0]
@@ -427,6 +499,26 @@ export default function AdminManageContracts() {
     );
 
     return current < dStart || current > dEnd;
+  };
+
+  const disabledDateLate = (current) => {
+    const arrayDayEnd = form
+      .getFieldValue("timeBookingEnd")
+      .split(" ")[0]
+      .split("-");
+    const dEnd = new Date(
+      `${arrayDayEnd[1]}-${arrayDayEnd[0]}-${arrayDayEnd[2]}`
+    );
+
+    const arrayDayStart = form
+      .getFieldValue("timeBookingStart")
+      .split(" ")[0]
+      .split("-");
+    const dStart = new Date(
+      `${arrayDayStart[1]}-${arrayDayStart[0]}-${arrayDayStart[2]}`
+    );
+
+    return current < dEnd;
   };
 
   const { data, refetch } = useQuery({
@@ -483,7 +575,7 @@ export default function AdminManageContracts() {
         >
           <Image
             className="h-32 aspect-video rounded-md object-cover"
-            src={images[0]}
+            src={images[0] || "/placeholder.svg"}
           />
         </Image.PreviewGroup>
       ),
@@ -712,7 +804,7 @@ export default function AdminManageContracts() {
                 <Input />
               </Form.Item>
               <Form.Item
-                label="Tổng giá tiền thuê bang so"
+                label="Tổng giá tiền thuê bằng số"
                 hidden
                 name="totalCostNumber"
               >
@@ -721,10 +813,11 @@ export default function AdminManageContracts() {
 
               <h2>Trả xe trước thời hạn(nếu có)</h2>
               <Form.Item label="Thời gian kết thúc thuê" name="timeFinish">
-                <DatePicker
-                  format="DD-MM-YYYY"
-                  disabledDate={disabledDate}
+                <DatePicker 
+                  format="DD-MM-YYYY" 
+                  disabledDate={disabledDateEarly} 
                   onChange={handleDays}
+                  disabled={returnType === 'late'}
                 />
               </Form.Item>
               <Form.Item
@@ -740,6 +833,43 @@ export default function AdminManageContracts() {
                   style={{ width: "170px" }}
                 />
               </Form.Item>
+
+              <h2>Trả xe sau thời hạn(nếu có)</h2>
+              <Form.Item label="Thời gian trả xe" name="lateTimeFinish">
+                <DatePicker
+                  format="DD-MM-YYYY"
+                  disabledDate={disabledDateLate}
+                  onChange={handleLateDays}
+                  disabled={returnType === 'early'}
+                />
+              </Form.Item>
+              <Form.Item label="Số ngày trả muộn" name="lateDays">
+                <InputNumber readOnly style={{ width: "170px" }} />
+              </Form.Item>
+              <Form.Item label="Phí phạt trả muộn (10% mỗi ngày)" name="latePenalty">
+                <InputNumber
+                  readOnly
+                  formatter={(value) =>
+                    `${value} VND`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value.replace(/\VND\s?|(,*)/g, "")}
+                  style={{ width: "170px" }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Giá trị kết toán hợp đồng"
+                name="late_cost_settlement"
+              >
+                <InputNumber
+                  readOnly
+                  formatter={(value) =>
+                    `${value} VND`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value.replace(/\VND\s?|(,*)/g, "")}
+                  style={{ width: "170px" }}
+                />
+              </Form.Item>
+
               <Form.Item label="Ghi chú" name="note">
                 <Input />
               </Form.Item>

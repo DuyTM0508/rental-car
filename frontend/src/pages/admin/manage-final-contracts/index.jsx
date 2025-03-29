@@ -435,6 +435,11 @@ export default function AdminManageContracts() {
       key: "totalCost",
       title: "Số tiền kết toán",
       dataIndex: "totalCost",
+      render: (value) => (
+        <Text type="">
+          {new Intl.NumberFormat("vi-VN").format(value)} VND
+        </Text>
+      ),
     },
     {
       key: "timeBookingStart",

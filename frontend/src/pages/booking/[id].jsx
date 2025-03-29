@@ -538,7 +538,16 @@ const BookingPage = () => {
                     },
                   ]}
                 >
-                  <Checkbox>Đồng ý với mọi điều khoản của chúng tôi</Checkbox>
+                  <Checkbox>
+                    <span className="font-medium">Tôi xác nhận rằng:</span>
+                    <ul className="list-disc pl-5 mt-2 text-sm text-gray-600 space-y-1">
+                      <li>Sở hữu giấy phép lái xe hợp pháp và còn hiệu lực</li>
+                      <li>Chịu trách nhiệm về tính hợp lệ của giấy phép</li>
+                      <li>Tuân thủ luật giao thông</li>
+                      <li>Chấp nhận hậu quả pháp lý nếu vi phạm</li>
+                      <li>Đồng ý với quyền kiểm tra và xác minh của dịch vụ</li>
+                    </ul>
+                  </Checkbox>
                 </Form.Item>
                 <Form.Item>
                   <Space
